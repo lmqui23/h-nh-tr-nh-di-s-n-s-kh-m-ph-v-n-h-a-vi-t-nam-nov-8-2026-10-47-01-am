@@ -50,11 +50,23 @@ export const api = {
   saveEditorial: (item: Partial<CulturalArticle | Journey> & { kind: 'article' | 'journey' }, id?: string) => request<{ item: CulturalArticle | Journey }>(id ? `/admin/editorial/${id}` : '/admin/editorial', { method: id ? 'PUT' : 'POST', body: JSON.stringify({ item }) }),
   deleteEditorial: (id: string) => request<void>(`/admin/editorial/${id}`, { method: 'DELETE' }),
   adminEditorial: (kind: 'article' | 'journey') => request<{ items: Array<CulturalArticle | Journey> }>(`/admin/editorial?kind=${kind}`),
-  uploadPlaceMedia: (placeId: string, image: File) => {
-    const body = new FormData();
-    body.set('image', image);
-    return request<{ media: { id: string; image_url: string } }>(`/admin/places/${placeId}/media`, { method: 'POST', body });
-  },
+  replacePlaceImage: (placeId: string, image: File) => {
+  const body = new FormData();
+  body.set('image', image);
+
+  return request<{
+    media: {
+      id: string;
+      image_url: string;
+    };
+  }>(
+    `/admin/places/${placeId}/image`,
+    {
+      method: 'PUT',
+      body,
+    }
+  );
+},
   adminMedia: () => request<{ items: Array<{ id: string; owner_id: string; post_id: string | null; place_id: string | null; image_url: string; original_name: string; mime_type: string; size_bytes: number; username: string; display_name: string; moderation_status: string | null; place_name: string | null }> }>('/admin/media'),
   deleteMedia: (mediaId: string) => request<void>(`/admin/media/${mediaId}`, { method: 'DELETE' }),
   adminUsers: () => request<{ users: Array<Pick<User, 'id' | 'email' | 'username' | 'display_name' | 'role' | 'status'>> }>('/admin/users'),

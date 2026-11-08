@@ -129,6 +129,39 @@ if (!database.pragma('table_info(posts)').some((column) => column.name === 'titl
   database.exec("ALTER TABLE posts ADD COLUMN title TEXT NOT NULL DEFAULT ''");
 }
 
+// =====================================================
+// ENFORCE: Mỗi địa điểm chỉ có duy nhất một ảnh
+// =====================================================
+
+// Kiểm tra dữ liệu trùng trước khi tạo UNIQUE INDEX
+const duplicatePlaces = database.prepare(`
+  SELECT place_id, COUNT(*) AS total
+  FROM media
+  WHERE place_id IS NOT NULL
+  GROUP BY place_id
+  HAVING COUNT(*) > 1
+`).all();
+
+if (duplicatePlaces.length > 0) {
+  console.error(
+    'Phát hiện địa điểm có nhiều ảnh:',
+    duplicatePlaces
+  );
+
+  throw new Error(
+    'Database có ảnh địa điểm trùng. ' +
+    'Hãy xử lý dữ liệu trước khi khởi động server.'
+  );
+}
+
+// Mỗi place_id chỉ được có một bản ghi media
+database.exec(`
+  CREATE UNIQUE INDEX IF NOT EXISTS
+  idx_media_unique_place_image
+  ON media(place_id)
+  WHERE place_id IS NOT NULL;
+`);
+
 const app = express();
 app.disable('x-powered-by');
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
@@ -269,9 +302,24 @@ const upload = multer({
 });
 const adminMediaUpload = multer({
   storage: imageStorage,
-  limits: { fileSize: 50 * 1024 * 1024, files: 1 },
+
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+    files: 1,
+  },
+
   fileFilter(_request, file, callback) {
-    callback(null, ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm', 'application/pdf'].includes(file.mimetype));
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+    ];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      return callback(new Error('Chỉ chấp nhận ảnh JPG, PNG hoặc WEBP.'));
+    }
+
+    callback(null, true);
   },
 });
 
@@ -597,44 +645,143 @@ app.post('/api/admin/places', requireAuth, requireAdmin, (request, response) => 
   response.status(201).json({ place: placeFromRow(database.prepare('SELECT * FROM places WHERE id = ?').get(id)) });
 });
 
-app.post('/api/admin/places/:placeId/media', requireAuth, requireAdmin, adminMediaUpload.single('image'), (request, response) => {
-  const place = database.prepare('SELECT * FROM places WHERE id = ?').get(request.params.placeId);
-  if (!place) {
-    if (request.file) fs.unlinkSync(request.file.path);
-    return response.status(404).json({ error: 'Không tìm thấy địa điểm.' });
+
+app.put(
+  '/api/admin/places/:placeId/image',
+  requireAuth,
+  requireAdmin,
+  adminMediaUpload.single('image'),
+  (request, response) => {
+
+    const place = database
+      .prepare('SELECT * FROM places WHERE id = ?')
+      .get(request.params.placeId);
+
+    if (!place) {
+      if (request.file) {
+        fs.unlinkSync(request.file.path);
+      }
+
+      return response.status(404).json({
+        error: 'Không tìm thấy địa điểm.',
+      });
+    }
+
+    if (!request.file) {
+      return response.status(400).json({
+        error: 'Vui lòng chọn ảnh.',
+      });
+    }
+
+    // Kiểm tra nội dung thực tế của file
+    if (!imageSignatureIsValid(request.file)) {
+      fs.unlinkSync(request.file.path);
+
+      return response.status(400).json({
+        error: 'File không phải ảnh hợp lệ.',
+      });
+    }
+
+    const id = crypto.randomUUID();
+    const filename = path.basename(request.file.path);
+
+    const mediaAsset = {
+      id,
+      image_url: `/uploads/${request.user.id}/${filename}`,
+      media_type: 'image',
+      source_url: '',
+      source_name: 'Ảnh do quản trị viên cung cấp',
+      photographer: request.user.display_name,
+      license_type: 'User-provided',
+      attribution_text:
+        'Ảnh do quản trị viên cung cấp; quyền sử dụng đã được xác nhận',
+      verification_status: 'verified',
+    };
+
+    const data = parseJson(place.data_json);
+
+    // Quy tắc cứng: chỉ lưu một ảnh trong hồ sơ
+    data.media.push(mediaAsset);
+    
+    // Lấy toàn bộ ảnh cũ để xóa file sau khi cập nhật DB thành công
+    const oldMedia = database
+      .prepare('SELECT owner_id, file_path FROM media WHERE place_id = ?')
+      .all(place.id);
+
+    const replaceImage = database.transaction(() => {
+
+      // Xóa toàn bộ bản ghi ảnh cũ của địa điểm
+      database
+        .prepare('DELETE FROM media WHERE place_id = ?')
+        .run(place.id);
+
+      // Lưu ảnh mới
+      database.prepare(`
+        INSERT INTO media (
+          id,
+          owner_id,
+          place_id,
+          file_path,
+          original_name,
+          mime_type,
+          size_bytes
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(
+        id,
+        request.user.id,
+        place.id,
+        filename,
+        path.basename(request.file.originalname).slice(0, 180),
+        request.file.mimetype,
+        request.file.size
+      );
+
+      // Cập nhật JSON hồ sơ
+      database.prepare(`
+        UPDATE places
+        SET data_json = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `).run(
+        JSON.stringify(data),
+        place.id
+      );
+    });
+
+    try {
+      replaceImage();
+    } catch (error) {
+      // Nếu DB lỗi, xóa file mới vừa upload
+      if (fs.existsSync(request.file.path)) {
+        fs.unlinkSync(request.file.path);
+      }
+
+      throw error;
+    }
+
+    // DB đã cập nhật thành công, lúc này mới xóa file cũ
+    for (const old of oldMedia) {
+      const oldFilePath = path.join(
+        uploadDirectory,
+        old.owner_id,
+        old.file_path
+      );
+
+      if (
+        fs.existsSync(oldFilePath) &&
+        old.file_path !== filename
+      ) {
+        fs.unlinkSync(oldFilePath);
+      }
+    }
+
+    return response.json({
+      media: mediaAsset,
+    });
   }
-  if (!request.file || !adminMediaSignatureIsValid(request.file)) {
-    if (request.file) fs.unlinkSync(request.file.path);
-    return response.status(400).json({ error: 'Tải lên tệp ảnh hợp lệ.' });
-  }
-  const id = crypto.randomUUID();
-  const filename = path.basename(request.file.path);
-  const mediaAsset = {
-    id,
-    image_url: `/uploads/${request.user.id}/${filename}`,
-    media_type: request.file.mimetype.startsWith('image/') ? 'image' : request.file.mimetype.startsWith('video/') ? 'video' : 'document',
-    source_url: '',
-    source_name: 'Ảnh do quản trị viên cung cấp',
-    photographer: request.user.display_name,
-    license_type: 'User-provided',
-    attribution_text: 'Ảnh do quản trị viên cung cấp; quyền sử dụng đã được xác nhận',
-    verification_status: 'verified',
-  };
-  const data = parseJson(place.data_json);
-  data.media = [...(Array.isArray(data.media) ? data.media : []), mediaAsset];
-  const saveMedia = database.transaction(() => {
-    database.prepare('INSERT INTO media (id, owner_id, place_id, file_path, original_name, mime_type, size_bytes) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .run(id, request.user.id, place.id, filename, path.basename(request.file.originalname).slice(0, 180), request.file.mimetype, request.file.size);
-    database.prepare('UPDATE places SET data_json = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(JSON.stringify(data), place.id);
-  });
-  try {
-    saveMedia();
-  } catch (error) {
-    fs.unlinkSync(request.file.path);
-    throw error;
-  }
-  response.status(201).json({ media: mediaAsset });
-});
+);
+
 
 app.post('/api/admin/editorial', requireAuth, requireAdmin, (request, response) => {
   const data = request.body.item || {};
@@ -680,14 +827,89 @@ app.delete('/api/admin/editorial/:itemId', requireAuth, requireAdmin, (request, 
   response.status(204).end();
 });
 
+
 app.put('/api/admin/places/:placeId', requireAuth, requireAdmin, (request, response) => {
-  const existing = database.prepare('SELECT * FROM places WHERE id = ?').get(request.params.placeId);
-  if (!existing) return response.status(404).json({ error: 'Không tìm thấy địa điểm.' });
-  const data = { ...placeFromRow(existing), ...request.body.place, id: existing.id };
-  database.prepare('UPDATE places SET name = ?, province_name = ?, category_id = ?, data_json = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
-    .run(String(data.name).trim(), String(data.province_name).trim(), String(data.category_id), JSON.stringify(data), existing.id);
-  response.json({ place: placeFromRow(database.prepare('SELECT * FROM places WHERE id = ?').get(existing.id)) });
+  const existing = database
+    .prepare('SELECT * FROM places WHERE id = ?')
+    .get(request.params.placeId);
+
+  if (!existing) {
+    return response.status(404).json({
+      error: 'Không tìm thấy địa điểm.',
+    });
+  }
+
+  const oldData = placeFromRow(existing);
+
+  const data = {
+    ...oldData,
+    ...request.body.place,
+    id: existing.id,
+    slug: oldData.slug,
+
+    // Không cho API chỉnh sửa thông tin làm thay đổi ảnh
+    media: oldData.media || [],
+  };
+
+  const name = String(data.name || '').trim();
+  const province = String(data.province_name || '').trim();
+  const category = String(data.category_id || '').trim();
+
+  if (
+    name.length < 2 ||
+    name.length > 200 ||
+    !province ||
+    !category
+  ) {
+    return response.status(400).json({
+      error: 'Tên, tỉnh/thành và danh mục không hợp lệ.',
+    });
+  }
+
+  if (
+    !Number.isFinite(Number(data.coordinates?.lat)) ||
+    !Number.isFinite(Number(data.coordinates?.lng)) ||
+    Number(data.coordinates.lat) < -90 ||
+    Number(data.coordinates.lat) > 90 ||
+    Number(data.coordinates.lng) < -180 ||
+    Number(data.coordinates.lng) > 180
+  ) {
+    return response.status(400).json({
+      error: 'Tọa độ địa điểm không hợp lệ.',
+    });
+  }
+
+  data.name = name;
+  data.province_name = province;
+  data.category_id = category;
+
+  const update = database.transaction(() => {
+    database.prepare(`
+      UPDATE places
+      SET name = ?,
+          province_name = ?,
+          category_id = ?,
+          data_json = ?,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).run(
+      name,
+      province,
+      category,
+      JSON.stringify(data),
+      existing.id
+    );
+  });
+
+  update();
+
+  response.json({
+    place: placeFromRow(
+      database.prepare('SELECT * FROM places WHERE id = ?').get(existing.id)
+    ),
+  });
 });
+
 
 app.delete('/api/admin/places/:placeId', requireAuth, requireAdmin, (request, response) => {
   const result = database.prepare("UPDATE places SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status != 'deleted'").run(request.params.placeId);
