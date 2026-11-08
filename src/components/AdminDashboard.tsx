@@ -135,7 +135,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setEdTitle(item.title || '');
     setEdSlug(item.slug || '');
     setEdSummary('summary' in item ? item.summary || '' : 'description' in item ? (item as any).description || '' : '');
-    setEdContent('content' in item ? item.content || '' : '');
+    const rawContent = 'content' in item ? item.content : '';
+    setEdContent(
+      typeof rawContent === 'string'
+        ? rawContent
+        : rawContent
+        ? JSON.stringify(rawContent, null, 2)
+        : ''
+    );
     setEdCoverImage('cover_image' in item ? (item as any).cover_image || '' : 'image_url' in item ? (item as any).image_url || '' : '');
     setEdCategory('category' in item ? (item as any).category || '' : '');
     setEdAuthor('author' in item ? (item as any).author || '' : '');
@@ -1301,4 +1308,5 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       )}
     </div>
   );
+
 };
