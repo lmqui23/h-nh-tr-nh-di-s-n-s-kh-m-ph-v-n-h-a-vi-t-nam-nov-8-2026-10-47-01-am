@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --color-do-son: #B8322A;
+  --color-vang-dat: #D8A84E;
+  --color-nau-dat: #795548;
+  --color-xanh-ngoc: #397C73;
+  --color-kem-giay: #F4EBDD;
+  --color-den-muc: #28231F;
+  --color-xanh-cham: #354C68;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #F4EBDD;
+  color: #28231F;
+  min-height: 100vh;
+}
+
+/* Custom scrollbars with lacquer/bronze accents */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EBE0CF;
+}
+::-webkit-scrollbar-thumb {
+  background: #C4B29A;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B8322A;
+}
+
+/* Traditional Vietnamese Paper Texture Pattern */
+.bg-do-paper {
+  background-color: #F4EBDD;
+  background-image: radial-gradient(#D5C7B2 0.75px, transparent 0.75px), radial-gradient(#D5C7B2 0.75px, #F4EBDD 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+}
+
+/* Dong Son & Folk Border Accent Pattern */
+.dong-son-border {
+  border-image: linear-gradient(to right, #B8322A, #D8A84E, #397C73, #354C68) 1;
+}
+
+/* Leaflet map container fixes */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background-color: #F4EBDD !important;
+  font-family: var(--font-sans) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: #FAF6EF !important;
+  color: #28231F !important;
+  border: 1px solid #D8A84E !important;
+  box-shadow: 0 10px 25px -5px rgba(40, 35, 31, 0.15) !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+  background: #FAF6EF !important;
+  border: 1px solid #D8A84E !important;
+}

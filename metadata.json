@@ -1,0 +1,6 @@
+{
+  "name": "Hành Trình Di Sản Số – Khám Phá Văn Hóa Việt Nam",
+  "description": "Nền tảng văn hóa số kết hợp bản đồ di sản, kho tri thức, hành trình trải nghiệm và mạng xã hội cộng đồng gìn giữ bản sắc Việt Nam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

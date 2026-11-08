@@ -1,0 +1,1655 @@
+# MASTER PROMPT: XÂY DỰNG NỀN TẢNG KHÁM PHÁ VĂN HÓA VÀ DI SẢN VIỆT NAM
+
+**Tên dự án:** HÀNH TRÌNH DI SẢN SỐ – KHÁM PHÁ VĂN HÓA VIỆT NAM
+
+**Slogan:** Chạm vào di sản – Khám phá bản sắc – Kết nối cộng đồng.
+
+---
+
+# I. VAI TRÒ VÀ MỤC TIÊU DỰ ÁN
+
+Bạn là một đội ngũ phát triển sản phẩm chuyên nghiệp bao gồm:
+
+- Senior Product Designer / UI/UX Designer.
+- Senior Frontend Developer.
+- Senior Backend Developer.
+- Database Architect.
+- Motion Designer.
+- Multimedia Designer.
+- Cultural Researcher.
+- Security Engineer.
+
+Nhiệm vụ của bạn là thiết kế và phát triển một nền tảng web khám phá văn hóa Việt Nam có giao diện đẹp, hiện đại, giàu tính nghệ thuật, có tính tương tác cao và có khả năng phát triển thành một sản phẩm thực tế.
+
+Đây không đơn thuần là website giới thiệu địa điểm du lịch hay danh sách làng nghề.
+
+Đây là một **nền tảng văn hóa số kết hợp giữa bản đồ di sản, kho tri thức văn hóa, khám phá du lịch, mạng xã hội và hành trình trải nghiệm cá nhân**.
+
+Website cần giúp người dùng:
+
+1. Khám phá các địa điểm văn hóa, lịch sử và di sản tại Việt Nam.
+2. Tìm hiểu kiến thức về lịch sử, phong tục, dân tộc, lễ hội, nghệ thuật, kiến trúc và làng nghề.
+3. Khám phá những địa điểm đáng đến và xây dựng hành trình tham quan.
+4. Chia sẻ hình ảnh, câu chuyện, trải nghiệm và đánh giá về các địa điểm.
+5. Xem những trải nghiệm thực tế của cộng đồng tại từng địa điểm.
+6. Xây dựng bản đồ hành trình khám phá văn hóa của riêng mình.
+7. Lưu giữ những kỷ niệm và kết nối với những người có cùng sở thích.
+
+**Triết lý sản phẩm:**
+
+- Place-centered: Địa điểm văn hóa là trung tâm của nền tảng.
+- Community-driven: Cộng đồng cùng đóng góp nội dung và trải nghiệm.
+- Knowledge-based: Kiến thức văn hóa phải có nguồn và được kiểm chứng.
+- Experience-first: Người dùng phải cảm thấy thú vị khi khám phá.
+- Authenticity-first: Tính chân thực của di sản quan trọng hơn hiệu ứng thị giác.
+
+---
+
+# II. PHẠM VI VÀ ĐỐI TƯỢNG
+
+## 2.1. Phạm vi địa lý
+
+Giai đoạn đầu tập trung vào:
+
+- Đông Nam Bộ.
+- Đồng bằng sông Cửu Long.
+
+Đây là hai khu vực có hệ thống văn hóa đa dạng, bao gồm văn hóa Kinh, Khmer, Chăm, Hoa và nhiều cộng đồng địa phương.
+
+Sau khi hoàn thiện kiến trúc hệ thống, cần có khả năng mở rộng ra toàn bộ Việt Nam mà không phải xây dựng lại nền tảng.
+
+Lưu ý đặc biệt về địa giới hành chính:
+
+- Không mặc định sử dụng danh sách tỉnh thành cũ như thể đó là danh sách hành chính hiện tại.
+- Phân biệt địa danh hành chính hiện tại với địa danh lịch sử, tên gọi truyền thống và tên gọi quen thuộc trong tư liệu.
+- Lưu trữ thông tin lịch sử địa giới nếu cần thiết.
+- Cho phép một địa điểm có tên gọi hoặc thông tin hành chính khác nhau theo từng thời kỳ.
+- Dữ liệu bản đồ phải có nguồn và ngày cập nhật.
+
+## 2.2. Đối tượng người dùng
+
+- Người trẻ muốn tìm hiểu văn hóa Việt Nam.
+- Người yêu thích du lịch và khám phá.
+- Sinh viên, học sinh, nhà nghiên cứu.
+- Người quan tâm đến lịch sử, dân tộc học và di sản.
+- Người dân địa phương muốn chia sẻ văn hóa quê hương.
+- Nghệ nhân, người làm nghề truyền thống và các tổ chức văn hóa.
+
+---
+
+# III. ĐỊNH HƯỚNG THIẾT KẾ VÀ NHẬN DIỆN
+
+## 3.1. Phong cách thiết kế
+
+**Creative / Colorful / Vietnamese Folk Culture / Modern Editorial / Interactive Digital Heritage.**
+
+Kết hợp:
+
+- Nghệ thuật dân gian Việt Nam.
+- Văn hóa truyền thống và họa tiết cổ.
+- Phong cách tạp chí văn hóa hiện đại.
+- Thiết kế giao diện số tối giản, tinh tế.
+- Trải nghiệm bản đồ và kể chuyện trực quan.
+- Animation và âm thanh có tính nghệ thuật.
+
+Không thiết kế website giống một cổng thông tin hành chính hoặc website bán tour du lịch thông thường.
+
+Website phải có cá tính thị giác riêng, có chiều sâu văn hóa nhưng vẫn hiện đại, dễ sử dụng.
+
+## 3.2. Bảng màu đề xuất
+
+| Màu sắc | Mã màu | Vai trò |
+|---|---|---|
+| Đỏ son | #B8322A | Điểm nhấn văn hóa |
+| Vàng đất | #D8A84E | Di sản, ánh sáng |
+| Nâu đất | #795548 | Chất liệu truyền thống |
+| Xanh ngọc | #397C73 | Thiên nhiên, sông nước |
+| Kem giấy | #F4EBDD | Nền chính |
+| Đen mực | #28231F | Văn bản |
+| Xanh chàm | #354C68 | Màu bổ trợ |
+
+Có thể điều chỉnh bảng màu khi thiết kế nhưng phải đảm bảo tính thống nhất.
+
+## 3.3. Họa tiết và yếu tố văn hóa
+
+Có thể khai thác những yếu tố:
+
+- Trống đồng Đông Sơn.
+- Chim Lạc.
+- Hoa sen.
+- Họa tiết mây, sóng nước.
+- Tranh dân gian Đông Hồ.
+- Hoa văn gốm.
+- Hoa văn thổ cẩm.
+- Nghệ thuật chạm khắc đình làng.
+- Giấy dó.
+- Tre, nứa và vật liệu truyền thống.
+
+Đặc biệt chú trọng đặc trưng Nam Bộ:
+
+- Sông nước và kênh rạch.
+- Chợ nổi.
+- Đờn ca tài tử.
+- Nhà cổ Nam Bộ.
+- Làng nghề truyền thống.
+- Văn hóa Khmer.
+- Văn hóa Chăm.
+- Di sản Óc Eo.
+- Miệt vườn và đời sống cộng đồng.
+
+Không sử dụng họa tiết văn hóa tùy tiện hoặc kết hợp sai bản sắc của các cộng đồng dân tộc.
+
+---
+
+# IV. KIẾN TRÚC SẢN PHẨM VÀ CÁC PHÂN HỆ CHÍNH
+
+Website gồm 5 phân hệ lớn:
+
+1. Bản đồ khám phá văn hóa.
+2. Kho tri thức và tư liệu văn hóa.
+3. Khám phá địa điểm và xây dựng hành trình.
+4. Mạng xã hội cộng đồng.
+5. Hồ sơ cá nhân và bản đồ ký ức.
+
+Các phân hệ phải liên kết với nhau thông qua một hệ thống dữ liệu thống nhất.
+
+**Nguyên tắc quan trọng:** Một địa điểm văn hóa chỉ có một thực thể dữ liệu chính. Bài viết, đánh giá, hình ảnh cộng đồng, hành trình và lịch sử ghé thăm đều có thể liên kết về địa điểm đó.
+
+---
+
+# V. CẤU TRÚC WEBSITE VÀ SITEMAP
+
+Thiết kế các trang chính:
+
+1. Trang chủ `/`
+2. Bản đồ văn hóa `/map`
+3. Khám phá văn hóa `/culture`
+4. Danh sách địa điểm `/places`
+5. Chi tiết địa điểm `/places/[slug]`
+6. Hành trình khám phá `/journeys`
+7. Chi tiết hành trình `/journeys/[slug]`
+8. Cộng đồng `/community`
+9. Chi tiết bài viết `/posts/[id]`
+10. Hồ sơ cá nhân `/users/[username]`
+11. Bản đồ cá nhân `/users/[username]/map`
+12. Địa điểm đã ghé thăm `/users/[username]/visited`
+13. Bộ sưu tập đã lưu `/users/[username]/saved`
+14. Thông báo `/notifications`
+15. Đăng nhập và đăng ký `/login`, `/register`
+16. Trang quản trị `/admin`
+
+Có thể bổ sung trang nghệ nhân, làng nghề, lễ hội, chủ đề văn hóa và các cộng đồng địa phương.
+
+---
+
+# VI. TRANG CHỦ
+
+Trang chủ phải tạo ấn tượng mạnh ngay từ lần truy cập đầu tiên.
+
+## 6.1. Hero Section
+
+Thiết kế một khu vực mở đầu nổi bật:
+
+- Hình ảnh tư liệu thực tế về văn hóa Việt Nam.
+- Tiêu đề lớn: "Chạm vào di sản – Khám phá bản sắc Việt".
+- Đoạn giới thiệu ngắn.
+- Nút "Bắt đầu khám phá".
+- Nút "Mở bản đồ văn hóa".
+- Hình ảnh nền có hiệu ứng chuyển động nhẹ.
+- Các họa tiết văn hóa được sử dụng làm yếu tố trang trí.
+
+Không sử dụng ảnh AI.
+
+## 6.2. Các khu vực nội dung
+
+Trang chủ bao gồm:
+
+1. Hero giới thiệu nền tảng.
+2. Khám phá văn hóa theo vùng miền.
+3. Bản đồ di sản nổi bật.
+4. Những địa điểm đáng khám phá.
+5. Các chủ đề văn hóa.
+6. Làng nghề và nghệ nhân.
+7. Lễ hội và sự kiện.
+8. Những câu chuyện từ cộng đồng.
+9. Hành trình khám phá được đề xuất.
+10. Bài viết và đánh giá mới nhất.
+11. Lời mời tham gia cộng đồng.
+
+Mỗi khu vực cần có hình ảnh, bố cục và cách trình bày riêng, tránh lặp lại một kiểu card cho toàn bộ website.
+
+---
+
+# VII. BẢN ĐỒ KHÁM PHÁ VĂN HÓA
+
+Đây là một trong những chức năng quan trọng nhất của nền tảng.
+
+## 7.1. Bản đồ tổng thể
+
+Xây dựng bản đồ Việt Nam, ưu tiên khu vực Đông Nam Bộ và Đồng bằng sông Cửu Long.
+
+Người dùng có thể:
+
+- Phóng to, thu nhỏ.
+- Di chuyển bản đồ.
+- Chọn tỉnh hoặc khu vực.
+- Xem địa điểm văn hóa.
+- Lọc theo loại hình di sản.
+- Tìm kiếm địa điểm.
+- Chuyển đổi giữa chế độ bản đồ và danh sách.
+
+## 7.2. Phân loại địa điểm
+
+Các loại địa điểm bao gồm:
+
+- Di tích lịch sử.
+- Di sản văn hóa.
+- Làng nghề truyền thống.
+- Công trình kiến trúc.
+- Chùa, đình, miếu và cơ sở tín ngưỡng.
+- Bảo tàng.
+- Lễ hội.
+- Địa điểm nghệ thuật dân gian.
+- Địa điểm ẩm thực truyền thống.
+- Cảnh quan văn hóa.
+- Không gian sinh hoạt cộng đồng.
+- Địa điểm trải nghiệm văn hóa.
+
+## 7.3. Marker và Popup
+
+Mỗi địa điểm có marker riêng.
+
+Khi nhấn vào marker, hiển thị:
+
+- Ảnh thực tế.
+- Tên địa điểm.
+- Loại hình văn hóa.
+- Địa phương.
+- Mô tả ngắn.
+- Đánh giá cộng đồng.
+- Số lượng bài viết liên quan.
+- Nút xem chi tiết.
+- Nút lưu địa điểm.
+- Nút chỉ đường.
+
+## 7.4. Bộ lọc
+
+Cho phép lọc theo:
+
+- Tỉnh/thành hoặc khu vực.
+- Loại hình di sản.
+- Chủ đề văn hóa.
+- Địa điểm nổi bật.
+- Địa điểm được cộng đồng quan tâm.
+- Địa điểm có nhiều bài viết.
+- Địa điểm đã được xác minh tư liệu.
+
+## 7.5. Bản đồ cộng đồng
+
+Đây là một lớp dữ liệu đặc biệt.
+
+Khi người dùng đăng bài viết, đánh giá hoặc hình ảnh gắn với một địa điểm, nội dung có thể xuất hiện trên bản đồ cộng đồng.
+
+Ví dụ:
+
+- Người dùng đăng ảnh tại một ngôi chùa.
+- Bài viết được gắn với địa điểm đó.
+- Bản đồ hiển thị dấu hiệu có nội dung cộng đồng.
+- Người khác nhấn vào marker để xem bài viết.
+- Từ bài viết có thể truy cập trang địa điểm.
+
+Phải có bộ lọc để phân biệt địa điểm chính thức và nội dung do cộng đồng đóng góp.
+
+## 7.6. Giao diện bản đồ
+
+Desktop:
+
+- Bản đồ chiếm khoảng 65–70% chiều rộng.
+- Danh sách địa điểm ở bên cạnh.
+- Bộ lọc và tìm kiếm dễ tiếp cận.
+
+Mobile:
+
+- Bản đồ toàn màn hình.
+- Danh sách địa điểm dạng bottom sheet có thể kéo lên/xuống.
+- Có nút chuyển sang chế độ danh sách.
+- Các nút thao tác phải phù hợp với màn hình cảm ứng.
+
+---
+
+# VIII. TRANG CHI TIẾT ĐỊA ĐIỂM
+
+Mỗi địa điểm có một trang chi tiết riêng.
+
+Nội dung gồm:
+
+## 8.1. Thông tin tổng quan
+
+- Tên địa điểm.
+- Ảnh đại diện.
+- Địa chỉ.
+- Khu vực hành chính hiện tại.
+- Tên gọi lịch sử hoặc tên gọi khác.
+- Loại hình di sản.
+- Tọa độ.
+- Giới thiệu ngắn.
+
+## 8.2. Nội dung văn hóa
+
+- Nguồn gốc lịch sử.
+- Quá trình hình thành.
+- Giá trị văn hóa.
+- Giá trị lịch sử.
+- Đặc điểm kiến trúc.
+- Phong tục và tập quán liên quan.
+- Nghệ thuật và lễ hội.
+- Nhân vật hoặc nghệ nhân liên quan.
+- Những câu chuyện thú vị.
+- Vai trò của địa điểm trong đời sống cộng đồng.
+
+## 8.3. Gallery
+
+- Ảnh tổng quan.
+- Ảnh kiến trúc.
+- Ảnh hiện vật.
+- Ảnh hoạt động văn hóa.
+- Ảnh lễ hội.
+- Video tư liệu nếu có.
+- Âm thanh tư liệu nếu có.
+
+Mỗi ảnh cần có chú thích và thông tin nguồn khi được cung cấp.
+
+## 8.4. Thông tin tham quan
+
+- Địa chỉ.
+- Vị trí bản đồ.
+- Giờ mở cửa nếu có nguồn xác nhận.
+- Giá vé nếu có nguồn xác nhận.
+- Thông tin liên hệ chính thức nếu có.
+- Lưu ý khi tham quan.
+- Quy định liên quan đến không gian văn hóa hoặc tín ngưỡng.
+
+Không tự bịa giờ mở cửa, giá vé hoặc thông tin tham quan.
+
+## 8.5. Nội dung cộng đồng
+
+Hiển thị:
+
+- Bài viết liên quan.
+- Ảnh do người dùng đóng góp.
+- Đánh giá.
+- Bình luận.
+- Trải nghiệm thực tế.
+- Câu chuyện cá nhân.
+
+Có thể lọc theo mới nhất, nổi bật và đánh giá cao.
+
+## 8.6. Các hành động
+
+- Lưu địa điểm.
+- Đánh dấu đã ghé thăm.
+- Viết đánh giá.
+- Đăng bài.
+- Chia sẻ.
+- Chỉ đường.
+- Thêm vào hành trình.
+
+---
+
+# IX. KHO TRI THỨC VĂN HÓA
+
+Xây dựng một hệ thống nội dung văn hóa có cấu trúc, dễ tìm kiếm và dễ mở rộng.
+
+## 9.1. Các nhóm chủ đề
+
+1. Lịch sử và di tích.
+2. Văn hóa các dân tộc.
+3. Tín ngưỡng và tôn giáo.
+4. Lễ hội truyền thống.
+5. Nghệ thuật dân gian.
+6. Âm nhạc và biểu diễn.
+7. Ẩm thực.
+8. Làng nghề.
+9. Kiến trúc.
+10. Trang phục truyền thống.
+11. Phong tục tập quán.
+12. Văn hóa sông nước.
+13. Chợ truyền thống.
+14. Nghệ nhân và người gìn giữ di sản.
+
+## 9.2. Nội dung theo địa phương
+
+Mỗi địa phương có một trang tổng hợp:
+
+- Tổng quan văn hóa.
+- Các cộng đồng dân tộc.
+- Lịch sử.
+- Di sản tiêu biểu.
+- Làng nghề.
+- Lễ hội.
+- Ẩm thực.
+- Nghệ nhân.
+- Địa điểm đáng khám phá.
+- Bài viết liên quan.
+
+Ví dụ về các chủ đề có thể triển khai:
+
+- Văn hóa Khmer Nam Bộ.
+- Văn hóa Chăm.
+- Di sản Óc Eo.
+- Văn hóa chợ nổi.
+- Đờn ca tài tử Nam Bộ.
+- Nhà cổ Nam Bộ.
+- Văn hóa miệt vườn.
+- Các làng nghề truyền thống.
+
+Thông tin về các cộng đồng dân tộc phải chính xác, tôn trọng và tránh định kiến.
+
+## 9.3. Hệ thống nguồn tư liệu
+
+Mỗi bài viết kiến thức cần có:
+
+- Tác giả hoặc đơn vị biên soạn.
+- Nguồn tham khảo.
+- Đường dẫn nguồn.
+- Ngày cập nhật.
+- Trạng thái xác minh.
+- Ghi chú về mức độ chắc chắn của thông tin khi cần thiết.
+
+Không được bịa sự kiện lịch sử, phong tục, truyền thuyết hoặc thông tin dân tộc học.
+
+Phải phân biệt kiến thức đã được xác minh với truyền thuyết, giả thuyết và nội dung do cộng đồng chia sẻ.
+
+---
+
+# X. HÀNH TRÌNH KHÁM PHÁ VĂN HÓA
+
+Người dùng có thể xây dựng các chuyến khám phá của riêng mình.
+
+## 10.1. Chức năng
+
+- Chọn địa điểm muốn đến.
+- Thêm địa điểm vào hành trình.
+- Sắp xếp thứ tự ghé thăm.
+- Xem các địa điểm trên bản đồ.
+- Lưu hành trình.
+- Chia sẻ hành trình.
+- Đánh dấu địa điểm đã hoàn thành.
+
+## 10.2. Hành trình gợi ý
+
+Ví dụ:
+
+- Hành trình khám phá văn hóa Khmer.
+- Hành trình di sản Óc Eo.
+- Hành trình làng nghề truyền thống.
+- Hành trình văn hóa sông nước.
+- Hành trình kiến trúc và nhà cổ.
+- Hành trình ẩm thực Nam Bộ.
+- Hành trình khám phá nghệ thuật dân gian.
+
+Mỗi hành trình cần có:
+
+- Tiêu đề.
+- Ảnh đại diện.
+- Mô tả.
+- Các địa điểm.
+- Thứ tự tham quan.
+- Bản đồ.
+- Nội dung văn hóa liên quan.
+
+Không tự bịa khoảng cách, thời gian di chuyển hoặc tuyến đường. Nếu có tích hợp dịch vụ bản đồ, sử dụng dữ liệu thực tế từ dịch vụ đó.
+
+---
+
+# XI. MẠNG XÃ HỘI CỘNG ĐỒNG
+
+Đây là phân hệ quan trọng giúp nền tảng phát triển thành một cộng đồng chia sẻ trải nghiệm văn hóa.
+
+## 11.1. News Feed
+
+Thiết kế trang cộng đồng với các tab:
+
+- Dành cho bạn.
+- Mới nhất.
+- Nổi bật.
+- Theo khu vực.
+- Theo chủ đề văn hóa.
+
+Mỗi bài viết gồm:
+
+- Avatar người đăng.
+- Tên người đăng.
+- Thời gian đăng.
+- Nội dung.
+- Hình ảnh hoặc video.
+- Địa điểm được gắn thẻ.
+- Chủ đề văn hóa.
+- Số lượt thích.
+- Số bình luận.
+- Số lượt chia sẻ.
+- Nút lưu bài viết.
+
+## 11.2. Đăng bài
+
+Người dùng có thể:
+
+- Viết nội dung.
+- Tải lên nhiều hình ảnh.
+- Đính kèm video nếu được hỗ trợ.
+- Gắn thẻ địa điểm trên bản đồ.
+- Chọn chủ đề văn hóa.
+- Chọn quyền riêng tư.
+- Đánh dấu bài viết là đánh giá địa điểm.
+
+Khi gắn địa điểm, phải liên kết bằng `place_id`, không chỉ lưu tên địa điểm dưới dạng văn bản.
+
+## 11.3. Đánh giá địa điểm
+
+Phân biệt rõ bài đăng thông thường và đánh giá địa điểm.
+
+Đánh giá gồm:
+
+- Địa điểm.
+- Điểm từ 1 đến 5 sao.
+- Nội dung đánh giá.
+- Hình ảnh.
+- Ngày ghé thăm.
+- Trạng thái xác nhận đã ghé thăm nếu có.
+
+Không được tự động gắn nhãn "đã xác minh ghé thăm" khi chưa có bằng chứng.
+
+## 11.4. Liên kết bài viết với bản đồ
+
+Đây là chức năng bắt buộc.
+
+Khi một bài viết được gắn với địa điểm:
+
+1. Bài viết xuất hiện trên hồ sơ người đăng.
+2. Bài viết xuất hiện trong nội dung cộng đồng của địa điểm.
+3. Bài viết có thể xuất hiện trên bản đồ cộng đồng.
+4. Người dùng có thể truy cập từ bài viết đến trang địa điểm.
+5. Người dùng có thể truy cập từ trang địa điểm đến bài viết.
+
+Một địa điểm có thể có nhiều bài viết và đánh giá từ nhiều người dùng.
+
+## 11.5. Tương tác xã hội
+
+- Like.
+- Comment.
+- Reply.
+- Share.
+- Save.
+- Follow.
+- Report.
+- Block user.
+
+Có thể phát triển thêm cộng đồng theo khu vực hoặc chủ đề văn hóa.
+
+---
+
+# XII. HỒ SƠ CÁ NHÂN VÀ BẢN ĐỒ KÝ ỨC
+
+Mỗi người dùng có một hồ sơ cá nhân.
+
+## 12.1. Hồ sơ
+
+Bao gồm:
+
+- Avatar.
+- Ảnh bìa.
+- Tên hiển thị.
+- Username.
+- Giới thiệu.
+- Sở thích văn hóa.
+- Số người theo dõi.
+- Số người đang theo dõi.
+
+Các tab:
+
+1. Bài viết.
+2. Địa điểm đã ghé thăm.
+3. Bản đồ cá nhân.
+4. Đánh giá.
+5. Bộ sưu tập đã lưu.
+6. Hành trình.
+
+## 12.2. Bản đồ cá nhân
+
+Đây là tính năng tạo dấu ấn riêng cho nền tảng.
+
+Mỗi người dùng có bản đồ hiển thị các địa điểm mình đã ghé thăm.
+
+Khi nhấn vào một marker, hiển thị:
+
+- Tên địa điểm.
+- Ngày ghé thăm.
+- Ảnh kỷ niệm.
+- Bài viết liên quan.
+- Đánh giá của người dùng.
+- Ghi chú cá nhân.
+
+Từ marker có thể mở trực tiếp bài viết hoặc đánh giá tương ứng.
+
+## 12.3. Phân biệt các trạng thái
+
+Phải phân biệt rõ:
+
+- `Saved`: Đã lưu, muốn khám phá trong tương lai.
+- `Visited`: Đã ghé thăm.
+- `Reviewed`: Đã viết đánh giá.
+- `Posted`: Đã đăng bài liên quan.
+
+Không tự động coi việc lưu địa điểm là đã ghé thăm.
+
+Một người có thể đã ghé thăm nhưng chưa đánh giá, hoặc đã đánh giá nhưng không muốn công khai bản đồ cá nhân.
+
+## 12.4. Quyền riêng tư
+
+Người dùng có thể:
+
+- Công khai bản đồ.
+- Chỉ chia sẻ với người theo dõi.
+- Giữ bản đồ riêng tư.
+- Chọn bài viết nào xuất hiện trên hồ sơ.
+
+Không yêu cầu người dùng chia sẻ vị trí GPS liên tục.
+
+---
+
+# XIII. ANIMATION VÀ MOTION DESIGN
+
+Website phải có trải nghiệm chuyển động được thiết kế có chủ đích, tạo cảm giác sống động nhưng không làm giảm khả năng sử dụng.
+
+## 13.1. Nguyên tắc
+
+- Animation mượt và tự nhiên.
+- Tốc độ chuyển cảnh hợp lý.
+- Có tính nhất quán giữa các trang.
+- Không lạm dụng hiệu ứng.
+- Không gây mỏi mắt.
+- Không ảnh hưởng hiệu năng trên điện thoại.
+- Hỗ trợ `prefers-reduced-motion`.
+
+## 13.2. Animation trang chủ
+
+- Hero có hiệu ứng layered parallax.
+- Hình ảnh xuất hiện theo chiều sâu.
+- Tiêu đề xuất hiện theo trình tự.
+- Họa tiết trống đồng, chim Lạc, hoa sen và sóng nước có thể chuyển động nhẹ.
+- Các section xuất hiện khi cuộn.
+- Card địa điểm có hover effect tinh tế.
+
+## 13.3. Animation bản đồ
+
+- Marker xuất hiện bằng fade/scale.
+- Marker được nhấn mạnh khi chọn.
+- Bản đồ chuyển đến vị trí địa điểm một cách mượt mà.
+- Popup xuất hiện bằng hiệu ứng chuyển cảnh.
+- Các marker thay đổi mượt khi lọc.
+- Bản đồ cá nhân có thể hiển thị hành trình theo trình tự thời gian.
+
+## 13.4. Animation trang địa điểm
+
+- Gallery có hiệu ứng chuyển ảnh.
+- Timeline lịch sử xuất hiện khi cuộn.
+- Nội dung được chia thành các phần dễ đọc.
+- Lightbox xem ảnh toàn màn hình.
+- Các nút lưu, thích, đánh giá có phản hồi trực quan.
+
+## 13.5. Animation cộng đồng và hồ sơ
+
+- Bài đăng xuất hiện mượt.
+- Like có hiệu ứng phản hồi nhẹ.
+- Huy hiệu khám phá có animation khi đạt được.
+- Các marker trên bản đồ cá nhân có hiệu ứng khi mở.
+- Chuyển tab và mở modal phải mượt.
+
+## 13.6. Công nghệ
+
+Có thể sử dụng:
+
+- Motion / Framer Motion.
+- CSS transitions.
+- CSS keyframes.
+- GSAP cho các hiệu ứng phức tạp nếu thực sự cần thiết.
+
+Không sử dụng quá nhiều thư viện animation chồng chéo.
+
+---
+
+# XIV. HỆ THỐNG ÂM THANH VĂN HÓA
+
+Âm thanh là một phần quan trọng của trải nghiệm khám phá văn hóa.
+
+## 14.1. Âm thanh nền
+
+Có thể thay đổi theo khu vực hoặc nội dung:
+
+- Miền Tây Nam Bộ: âm thanh sông nước, chợ nổi, đờn ca tài tử.
+- Đông Nam Bộ: âm thanh đời sống địa phương và sinh hoạt văn hóa.
+- Không gian văn hóa Khmer: nhạc ngũ âm và âm thanh lễ hội phù hợp.
+- Không gian văn hóa Chăm: nhạc cụ truyền thống phù hợp.
+- Làng nghề: tiếng dệt, tiếng làm gốm, tiếng đục đẽo.
+- Lễ hội: tiếng trống và âm thanh sinh hoạt lễ hội.
+
+Không gán âm thanh của cộng đồng này cho cộng đồng khác.
+
+## 14.2. Điều khiển âm thanh
+
+Thiết kế một audio control dễ sử dụng:
+
+- Bật/tắt âm thanh.
+- Điều chỉnh âm lượng.
+- Hiển thị trạng thái đang phát.
+- Tạm dừng.
+- Ghi nhớ lựa chọn của người dùng nếu được phép.
+- Không phát nhiều nguồn âm thanh đồng thời.
+
+Không tự động phát âm thanh khi người dùng vừa truy cập website.
+
+Trên thiết bị di động, chỉ phát âm thanh sau khi người dùng chủ động tương tác.
+
+## 14.3. Âm thanh tại địa điểm
+
+Mỗi địa điểm có thể có khu vực tư liệu âm thanh:
+
+- Thuyết minh.
+- Phỏng vấn nghệ nhân.
+- Nhạc truyền thống.
+- Ghi âm lễ hội.
+- Âm thanh đời sống.
+- Trích đoạn biểu diễn nghệ thuật dân gian.
+
+Mỗi bản ghi phải có tên, mô tả, tác giả hoặc người biểu diễn, nguồn và thông tin bản quyền.
+
+Không được tự tạo âm thanh giả rồi giới thiệu là tư liệu lịch sử hoặc bản ghi thực tế.
+
+---
+
+# XV. QUY ĐỊNH BẮT BUỘC VỀ HÌNH ẢNH: KHÔNG SỬ DỤNG ẢNH AI
+
+Đây là yêu cầu bắt buộc và có mức độ ưu tiên cao.
+
+## 15.1. Quy định tuyệt đối
+
+**KHÔNG SỬ DỤNG BẤT KỲ HÌNH ẢNH NÀO ĐƯỢC TẠO BỞI AI GENERATIVE IMAGE.**
+
+Không sử dụng ảnh tạo bởi:
+
+- Midjourney.
+- DALL·E.
+- Stable Diffusion.
+- Adobe Firefly.
+- Các công cụ tạo ảnh AI khác.
+
+Không sử dụng ảnh AI làm:
+
+- Ảnh đại diện địa điểm.
+- Ảnh di tích.
+- Ảnh nhân vật lịch sử.
+- Ảnh nghệ nhân.
+- Ảnh lễ hội.
+- Ảnh trang phục truyền thống.
+- Ảnh kiến trúc.
+- Ảnh hiện vật.
+- Ảnh làng nghề.
+- Ảnh minh họa văn hóa.
+- Ảnh demo hoặc dữ liệu mẫu.
+
+Không được sử dụng ảnh AI rồi trình bày như ảnh tư liệu thật.
+
+## 15.2. Nguồn ảnh ưu tiên
+
+Ưu tiên tìm ảnh từ:
+
+1. Cơ quan nhà nước và cơ quan quản lý văn hóa.
+2. Bảo tàng, thư viện và trung tâm lưu trữ.
+3. Cơ quan nghiên cứu và tổ chức bảo tồn di sản.
+4. Báo chí và tạp chí có uy tín.
+5. Website chính thức của địa phương.
+6. Website chính thức của khu di tích, làng nghề và đơn vị tổ chức lễ hội.
+7. Nhiếp ảnh gia và nhà nghiên cứu có công bố ảnh.
+8. Các kho ảnh có giấy phép sử dụng rõ ràng như Wikimedia Commons và Flickr Commons.
+
+Có thể tham khảo các nguồn báo chí và tạp chí:
+
+- Báo Nhân Dân.
+- VietnamPlus.
+- VnExpress.
+- Tuổi Trẻ.
+- Thanh Niên.
+- Tạp chí Văn hóa Nghệ thuật.
+- Các ấn phẩm chuyên ngành văn hóa, lịch sử và du lịch.
+
+Lưu ý: Có thể dùng những website này để nghiên cứu và tìm ảnh, nhưng không có nghĩa mọi ảnh trên đó đều được phép tải xuống hoặc tái sử dụng.
+
+## 15.3. Quy trình kiểm tra ảnh
+
+Đối với mỗi ảnh:
+
+1. Tìm ảnh thực tế phù hợp.
+2. Truy cập trang chứa ảnh gốc.
+3. Kiểm tra ảnh có đúng địa điểm, sự kiện hoặc đối tượng không.
+4. Xác định tác giả hoặc đơn vị sở hữu.
+5. Kiểm tra giấy phép.
+6. Kiểm tra điều kiện sử dụng, chỉnh sửa và phân phối.
+7. Lưu URL nguồn.
+8. Tối ưu ảnh để hiển thị.
+9. Ghi nhận metadata.
+10. Chỉ xuất bản khi đáp ứng điều kiện sử dụng.
+
+Không chỉ lấy URL ảnh từ Google Images mà bỏ qua nguồn gốc.
+
+Không xóa watermark, logo, chữ ký tác giả hoặc thông tin bản quyền.
+
+Không tự ý tải và lưu trữ ảnh báo chí có bản quyền khi chưa được cấp phép.
+
+## 15.4. Metadata ảnh
+
+Mỗi ảnh cần có các trường:
+
+- `image_id`
+- `place_id` hoặc `content_id`
+- `image_url`
+- `source_url`
+- `source_name`
+- `photographer`
+- `copyright_owner`
+- `license_type`
+- `license_url`
+- `attribution_text`
+- `description`
+- `date_taken`
+- `verification_status`
+- `usage_permission`
+- `created_at`
+
+Phân biệt:
+
+- Được phép sử dụng và lưu trữ.
+- Chỉ được phép nhúng hoặc liên kết.
+- Chỉ được phép sử dụng sau khi xin phép.
+- Chưa xác minh bản quyền.
+
+## 15.5. Khi không tìm được ảnh
+
+Không được tạo ảnh AI để thay thế.
+
+Thay vào đó:
+
+- Sử dụng placeholder có phong cách thiết kế riêng.
+- Dùng icon hoặc đồ họa vector.
+- Dùng họa tiết trang trí nguyên bản.
+- Hiển thị thông báo "Chưa có ảnh tư liệu".
+- Cho phép quản trị viên bổ sung ảnh sau.
+- Cho phép cộng đồng đóng góp ảnh khi họ có quyền sử dụng hợp pháp.
+
+## 15.6. Phân biệt ảnh tư liệu và đồ họa
+
+Cho phép sử dụng đồ họa vector, CSS illustration, icon và họa tiết trang trí được thiết kế nguyên bản.
+
+Tuy nhiên:
+
+- Ảnh tư liệu phải là hình ảnh thực tế có nguồn.
+- Đồ họa trang trí phải được nhận diện là yếu tố thiết kế.
+- Ảnh cộng đồng phải có cơ chế xác nhận quyền sử dụng.
+- Không sử dụng hình minh họa để giả làm ảnh chụp thực tế.
+
+## 15.7. Hiển thị ảnh
+
+- Ưu tiên ảnh gốc có độ phân giải tốt.
+- Không kéo giãn ảnh.
+- Không crop mất chi tiết văn hóa quan trọng.
+- Dùng WebP/AVIF cho phiên bản hiển thị nếu phù hợp.
+- Giữ thông tin nguồn ảnh gốc.
+- Lazy loading.
+- Hỗ trợ gallery.
+- Có chú thích, tác giả và nguồn.
+- Có chế độ xem ảnh lớn.
+
+Phong cách hình ảnh nên giống một tạp chí văn hóa chất lượng cao (Cultural Editorial).
+
+---
+
+# XVI. HỆ THỐNG KIỂM DUYỆT TƯ LIỆU VĂN HÓA
+
+Không chỉ kiểm tra bản quyền ảnh mà còn phải kiểm tra tính chính xác văn hóa.
+
+Ví dụ:
+
+- Ảnh chùa Khmer không được gắn nhầm thành kiến trúc Chăm.
+- Ảnh lễ hội ở địa phương khác không được sử dụng để minh họa cho lễ hội đang giới thiệu.
+- Không gắn sai trang phục truyền thống.
+- Không sử dụng ảnh hiện vật sai thời kỳ.
+- Không gán sai nguồn gốc cho một phong tục.
+
+Thiết kế quy trình kiểm duyệt gồm:
+
+1. Người đóng góp gửi nội dung.
+2. Hệ thống kiểm tra dữ liệu bắt buộc.
+3. Quản trị viên hoặc moderator xem xét.
+4. Kiểm tra nguồn và bản quyền.
+5. Kiểm tra địa điểm và ngữ cảnh văn hóa.
+6. Phê duyệt, yêu cầu chỉnh sửa hoặc từ chối.
+7. Lưu lịch sử chỉnh sửa.
+
+Trạng thái tư liệu:
+
+- `pending`
+- `verified`
+- `rejected`
+- `needs_revision`
+
+Phải phân biệt nội dung kiến thức chính thức với nội dung do cộng đồng tạo.
+
+---
+
+# XVII. TÍNH NĂNG BỔ SUNG ĐỂ TĂNG TRẢI NGHIỆM
+
+Có thể triển khai các chức năng sau theo từng giai đoạn:
+
+## 17.1. Bản đồ ký ức
+
+Lưu giữ hành trình khám phá văn hóa của mỗi người.
+
+## 17.2. Hộ chiếu di sản số
+
+Người dùng có thể thu thập dấu mốc khi khám phá các địa điểm.
+
+## 17.3. Huy hiệu khám phá
+
+Ví dụ:
+
+- Người khám phá di sản.
+- Người yêu làng nghề.
+- Người khám phá văn hóa Khmer.
+- Người khám phá miền Tây.
+- Người yêu nghệ thuật dân gian.
+
+Không cấp huy hiệu xác nhận tham quan nếu không có căn cứ phù hợp.
+
+## 17.4. Nhật ký hành trình
+
+Cho phép người dùng viết nhật ký, đăng ảnh và lưu kỷ niệm theo từng chuyến đi.
+
+## 17.5. Quiz văn hóa
+
+Các câu hỏi tương tác về lịch sử, văn hóa, lễ hội và di sản.
+
+## 17.6. AI Cultural Guide
+
+Có thể phát triển trợ lý AI giúp người dùng tìm hiểu nội dung văn hóa và gợi ý địa điểm.
+
+Tuy nhiên:
+
+- AI phải dựa trên dữ liệu có nguồn.
+- Phải dẫn nguồn khi trả lời kiến thức.
+- Phải thông báo khi thông tin chưa được xác minh.
+- Không được tạo ra thông tin lịch sử giả.
+- Không được tạo ảnh AI.
+- Không được tự nhận nội dung AI là tư liệu chính thống.
+
+---
+
+# XVIII. TÌM KIẾM VÀ ĐỀ XUẤT
+
+Xây dựng hệ thống tìm kiếm toàn nền tảng.
+
+Có thể tìm theo:
+
+- Tên địa điểm.
+- Tỉnh/thành.
+- Khu vực.
+- Loại hình di sản.
+- Chủ đề văn hóa.
+- Làng nghề.
+- Nghệ nhân.
+- Lễ hội.
+- Bài viết.
+- Người dùng.
+
+Đề xuất nội dung dựa trên:
+
+- Khu vực người dùng quan tâm.
+- Chủ đề văn hóa đã xem.
+- Địa điểm đã lưu.
+- Hành trình đã tạo.
+- Nội dung cộng đồng tương tác.
+
+Không cần thu thập vị trí chính xác liên tục để cá nhân hóa.
+
+---
+
+# XIX. CƠ SỞ DỮ LIỆU VÀ MÔ HÌNH DỮ LIỆU
+
+Thiết kế cơ sở dữ liệu có khả năng mở rộng.
+
+Ưu tiên PostgreSQL và PostGIS.
+
+Các bảng chính đề xuất:
+
+## 19.1. Người dùng
+
+`users`
+
+- id
+- username
+- email
+- password_hash hoặc auth_provider_id
+- display_name
+- avatar_url
+- cover_url
+- bio
+- privacy_settings
+- created_at
+
+## 19.2. Địa lý
+
+`regions`
+
+`provinces`
+
+- id
+- name
+- administrative_version
+- historical_names
+- boundary_data
+
+## 19.3. Địa điểm
+
+`places`
+
+- id
+- slug
+- name
+- alternative_names
+- province_id
+- category_id
+- address
+- latitude
+- longitude
+- short_description
+- historical_background
+- cultural_significance
+- visitor_information
+- verification_status
+- created_at
+- updated_at
+
+## 19.4. Nội dung văn hóa
+
+`cultural_categories`
+
+`cultural_topics`
+
+`cultural_articles`
+
+`article_sources`
+
+## 19.5. Hình ảnh và âm thanh
+
+`media_assets`
+
+- id
+- media_type
+- file_url
+- source_url
+- source_name
+- author
+- copyright_owner
+- license_type
+- license_url
+- attribution_text
+- verification_status
+- usage_permission
+
+`place_media`
+
+`post_media`
+
+`audio_assets`
+
+Các nội dung media cần có cơ chế xác minh và kiểm soát quyền sử dụng.
+
+## 19.6. Bài viết và đánh giá
+
+`posts`
+
+`post_places`
+
+`reviews`
+
+`comments`
+
+`likes`
+
+`post_saves`
+
+`post_media`
+
+Tách bài viết thông thường và đánh giá địa điểm thành các loại dữ liệu phù hợp.
+
+## 19.7. Hành trình cá nhân
+
+`visited_places`
+
+`saved_places`
+
+`journeys`
+
+`journey_places`
+
+Lưu ngày ghé thăm, ghi chú, quyền riêng tư và thứ tự địa điểm trong hành trình.
+
+## 19.8. Quan hệ xã hội
+
+`follows`
+
+`notifications`
+
+`user_blocks`
+
+`content_reports`
+
+## 19.9. Quản trị và kiểm duyệt
+
+`moderation_logs`
+
+`verification_records`
+
+`admin_roles`
+
+`content_reports`
+
+## 19.10. Nguyên tắc dữ liệu
+
+- Sử dụng foreign key.
+- Có unique constraint hợp lý.
+- Có index cho tìm kiếm và truy vấn địa lý.
+- Dùng PostGIS cho truy vấn khoảng cách và không gian.
+- Có migration.
+- Có transaction.
+- Có phân quyền truy cập.
+- Tránh lưu dữ liệu trùng lặp.
+- Không dùng dữ liệu mẫu giả để đánh lừa người dùng.
+
+Đặc biệt, cần bảo đảm quan hệ dữ liệu giữa địa điểm, bài viết, đánh giá, ảnh, người dùng và hành trình.
+
+---
+
+# XX. KIẾN TRÚC VÀ CÔNG NGHỆ
+
+AI coding agent có thể lựa chọn stack phù hợp, nhưng ưu tiên tính ổn định và khả năng bảo trì.
+
+Stack đề xuất:
+
+## Frontend
+
+- Next.js.
+- React.
+- TypeScript.
+- Tailwind CSS.
+- Motion / Framer Motion.
+- MapLibre GL hoặc Leaflet.
+
+## Backend
+
+Có thể sử dụng:
+
+- Next.js API.
+- NestJS.
+- REST API hoặc kiến trúc phù hợp.
+
+## Database
+
+- PostgreSQL.
+- PostGIS.
+- Supabase nếu phù hợp.
+
+## Authentication
+
+- Supabase Auth hoặc giải pháp tương đương.
+
+## Storage
+
+- Object Storage phù hợp để lưu ảnh, video và âm thanh.
+- CDN để phân phối media.
+
+## Deployment
+
+- Vercel hoặc nền tảng phù hợp cho frontend.
+- Backend và database có thể triển khai trên dịch vụ riêng.
+
+Không bắt buộc sử dụng toàn bộ stack trên nếu có lựa chọn tốt hơn. Tuy nhiên, phải giải thích lựa chọn kiến trúc và bảo đảm tính nhất quán.
+
+---
+
+# XXI. QUẢN TRỊ HỆ THỐNG
+
+Xây dựng trang Admin Dashboard.
+
+Các vai trò:
+
+- Guest.
+- User.
+- Moderator.
+- Admin.
+
+Admin có thể:
+
+- Quản lý địa điểm.
+- Quản lý danh mục văn hóa.
+- Quản lý bài viết kiến thức.
+- Quản lý tỉnh thành và khu vực.
+- Quản lý nghệ nhân và làng nghề.
+- Quản lý hình ảnh.
+- Quản lý âm thanh.
+- Kiểm tra nguồn và bản quyền media.
+- Duyệt nội dung cộng đồng.
+- Xử lý báo cáo.
+- Quản lý người dùng.
+- Xem thống kê hoạt động.
+
+Moderator có thể kiểm duyệt nội dung theo quyền được cấp.
+
+Cần có lịch sử thao tác quản trị.
+
+---
+
+# XXII. BẢO MẬT VÀ QUYỀN RIÊNG TƯ
+
+- Authentication an toàn.
+- Authorization theo vai trò.
+- Validation dữ liệu.
+- Chống XSS.
+- Chống SQL injection.
+- Rate limiting.
+- Kiểm tra file tải lên.
+- Giới hạn dung lượng media.
+- Chống spam.
+- Chặn và báo cáo người dùng.
+- Xóa bài viết và tài khoản theo quy định.
+- Quản lý quyền riêng tư của bản đồ cá nhân.
+- Không công khai thông tin vị trí cá nhân nếu người dùng chưa đồng ý.
+- Không yêu cầu theo dõi GPS liên tục.
+- Không để người dùng truy cập dữ liệu riêng tư của người khác.
+
+---
+
+# XXIII. RESPONSIVE VÀ TRẢI NGHIỆM MOBILE
+
+Thiết kế Mobile-first nhưng phải hoạt động tốt trên desktop.
+
+## Desktop
+
+- Navigation rõ ràng.
+- Layout có chiều sâu.
+- Bản đồ kết hợp danh sách.
+- Gallery lớn.
+- Feed dễ đọc.
+
+## Mobile
+
+Thanh điều hướng dưới gồm:
+
+1. Trang chủ.
+2. Bản đồ.
+3. Đăng bài.
+4. Cộng đồng.
+5. Hồ sơ.
+
+Các yêu cầu:
+
+- Touch target đủ lớn.
+- Bottom sheet cho bản đồ.
+- Feed một cột.
+- Bộ lọc dễ thao tác.
+- Gallery vuốt được.
+- Audio control dễ tiếp cận.
+- Không có thành phần tràn màn hình.
+- Animation không làm giảm hiệu năng.
+
+---
+
+# XXIV. SEO, ACCESSIBILITY VÀ HIỆU NĂNG
+
+## SEO
+
+- Metadata cho từng trang.
+- URL thân thiện.
+- Sitemap.
+- Open Graph.
+- Structured data phù hợp.
+- Nội dung địa điểm có thể được tìm kiếm.
+
+## Accessibility
+
+- Semantic HTML.
+- Hỗ trợ keyboard navigation.
+- Alt text cho ảnh.
+- Độ tương phản tốt.
+- Screen reader.
+- Focus state rõ ràng.
+- Hỗ trợ giảm chuyển động.
+- Điều khiển âm thanh có nhãn rõ ràng.
+
+## Performance
+
+- Lazy loading.
+- Responsive images.
+- WebP/AVIF.
+- Code splitting.
+- Caching.
+- Tối ưu API.
+- Tối ưu bản đồ.
+- Tránh animation quá nặng.
+- Theo dõi Core Web Vitals.
+
+---
+
+# XXV. QUY TRÌNH PHÁT TRIỂN
+
+Không xây dựng tất cả một cách thiếu kiểm soát.
+
+Chia dự án thành các giai đoạn.
+
+## Giai đoạn 1: Product Foundation và Design System
+
+- Phân tích yêu cầu.
+- Thiết kế kiến trúc.
+- Thiết kế database.
+- Thiết kế sitemap.
+- Thiết kế màu sắc, typography.
+- Thiết kế component system.
+- Xây dựng layout responsive.
+
+## Giai đoạn 2: Core Experience
+
+- Trang chủ.
+- Bản đồ văn hóa.
+- Danh sách địa điểm.
+- Chi tiết địa điểm.
+- Tìm kiếm.
+- Bộ lọc.
+- Kho tri thức văn hóa.
+
+## Giai đoạn 3: Community
+
+- Authentication.
+- Hồ sơ cá nhân.
+- Đăng bài.
+- Upload media.
+- Gắn địa điểm.
+- Feed.
+- Like và comment.
+- Review.
+- Follow.
+
+## Giai đoạn 4: Personal Journey
+
+- Địa điểm đã lưu.
+- Địa điểm đã ghé thăm.
+- Bản đồ cá nhân.
+- Nhật ký hành trình.
+- Xây dựng tuyến khám phá.
+- Chia sẻ hành trình.
+
+## Giai đoạn 5: Multimedia và Motion
+
+- Animation toàn nền tảng.
+- Audio control.
+- Âm thanh theo khu vực.
+- Gallery.
+- Video và tư liệu âm thanh.
+- Kiểm tra nguồn và bản quyền media.
+
+## Giai đoạn 6: Admin và Moderation
+
+- Admin dashboard.
+- Quản lý dữ liệu.
+- Kiểm duyệt văn hóa.
+- Kiểm duyệt media.
+- Quản lý báo cáo.
+- Quản lý người dùng.
+
+## Giai đoạn 7: Testing và Deployment
+
+- Kiểm tra chức năng.
+- Kiểm tra responsive.
+- Kiểm tra bảo mật.
+- Kiểm tra hiệu năng.
+- Kiểm tra nguồn ảnh.
+- Kiểm tra quyền sử dụng media.
+- Triển khai và viết hướng dẫn.
+
+---
+
+# XXVI. YÊU CẦU VỀ CHẤT LƯỢNG SẢN PHẨM
+
+Đây là yêu cầu rất quan trọng.
+
+Không chỉ tạo một giao diện demo đẹp nhưng các chức năng bên trong không hoạt động.
+
+Phải phân biệt:
+
+- Chức năng đã hoàn thành.
+- Chức năng đang sử dụng dữ liệu mẫu.
+- Chức năng chưa được triển khai.
+- Chức năng cần dịch vụ bên ngoài hoặc API key.
+
+Không được tạo nút bấm giả.
+
+Không được tạo chức năng chỉ hoạt động trên giao diện nhưng không có logic backend khi chức năng đó cần lưu dữ liệu.
+
+Ví dụ:
+
+- Khi người dùng lưu địa điểm, trạng thái phải được lưu trong database.
+- Khi người dùng đăng bài, bài viết phải được lưu và hiển thị trong feed.
+- Khi bài viết gắn với địa điểm, bài viết phải xuất hiện trong trang địa điểm.
+- Khi người dùng đánh dấu đã ghé thăm, bản đồ cá nhân phải cập nhật.
+- Khi nhấn vào marker cá nhân, phải mở được nội dung liên quan.
+- Khi người dùng đánh giá, dữ liệu đánh giá phải được lưu.
+- Khi người dùng theo dõi một người khác, quan hệ follow phải được lưu.
+- Khi người dùng thay đổi quyền riêng tư, hệ thống phải áp dụng đúng quyền đó.
+
+Không được giả lập dữ liệu văn hóa hoặc ảnh tư liệu không có nguồn xác minh.
+
+Nếu chưa có dữ liệu thật, hãy tạo trạng thái trống hoặc placeholder phù hợp.
+
+---
+
+# XXVII. TIÊU CHÍ NGHIỆM THU
+
+Sản phẩm chỉ được xem là hoàn thành khi đáp ứng các tiêu chí sau:
+
+## Giao diện
+
+- Giao diện có nhận diện văn hóa Việt Nam.
+- Hiện đại, đẹp, nhất quán.
+- Responsive.
+- Animation mượt.
+- Không quá tải hiệu ứng.
+- Có hỗ trợ giảm chuyển động.
+
+## Bản đồ
+
+- Hiển thị địa điểm.
+- Có marker.
+- Có bộ lọc.
+- Có popup.
+- Có trang chi tiết.
+- Có lớp dữ liệu cộng đồng.
+- Có bản đồ cá nhân.
+
+## Nội dung
+
+- Có danh mục văn hóa.
+- Có trang kiến thức.
+- Có thông tin địa điểm.
+- Có nguồn tư liệu.
+- Có phân biệt nội dung xác minh và nội dung cộng đồng.
+
+## Cộng đồng
+
+- Đăng bài.
+- Upload ảnh.
+- Gắn địa điểm.
+- Like.
+- Comment.
+- Review.
+- Follow.
+- Share.
+- Report.
+
+## Hồ sơ cá nhân
+
+- Có trang cá nhân.
+- Có bài viết.
+- Có đánh giá.
+- Có địa điểm đã lưu.
+- Có địa điểm đã ghé thăm.
+- Có bản đồ cá nhân.
+- Có quyền riêng tư.
+
+## Multimedia
+
+- Có audio control.
+- Không tự phát âm thanh.
+- Có âm thanh theo nội dung phù hợp.
+- Không có ảnh AI.
+- Ảnh tư liệu có nguồn.
+- Có thông tin bản quyền.
+- Không sử dụng ảnh trái phép.
+
+## Admin
+
+- Quản lý địa điểm.
+- Quản lý nội dung.
+- Quản lý media.
+- Kiểm duyệt nội dung.
+- Quản lý người dùng.
+
+## Chất lượng kỹ thuật
+
+- Database có cấu trúc tốt.
+- API hoạt động.
+- Authentication an toàn.
+- Responsive.
+- Không có lỗi nghiêm trọng.
+- Có hướng dẫn cài đặt.
+- Có hướng dẫn triển khai.
+
+---
+
+# XXVIII. YÊU CẦU ĐẦU RA TỪ AI CODING AGENT
+
+Trước khi bắt đầu, hãy:
+
+1. Phân tích toàn bộ yêu cầu.
+2. Đề xuất kiến trúc hệ thống.
+3. Đề xuất công nghệ.
+4. Thiết kế sitemap.
+5. Thiết kế database schema.
+6. Xác định các chức năng cốt lõi.
+7. Xác định những phần cần dịch vụ bên ngoài.
+8. Đề xuất kế hoạch triển khai.
+
+Sau đó bắt đầu xây dựng sản phẩm thực tế.
+
+Khi triển khai cần:
+
+- Viết code có cấu trúc.
+- Chia component hợp lý.
+- Có type definitions.
+- Có database migration.
+- Có validation.
+- Có error handling.
+- Có loading state.
+- Có empty state.
+- Có responsive layout.
+- Có documentation.
+
+Khi kết thúc, cung cấp:
+
+1. Cấu trúc thư mục.
+2. Công nghệ sử dụng.
+3. Cách cài đặt.
+4. Cách chạy local.
+5. Cách cấu hình database.
+6. Các biến môi trường cần thiết.
+7. Cách chạy migration.
+8. Cách tạo tài khoản demo.
+9. Các chức năng đã hoàn thành.
+10. Các chức năng chưa hoàn thành.
+11. Các nguồn dữ liệu và media đang sử dụng.
+12. Các vấn đề về bản quyền hoặc API cần xử lý trước khi triển khai công khai.
+
+---
+
+# XXIX. CHỈ DẪN QUAN TRỌNG KHI THỰC HIỆN
+
+**1. Không chỉ làm một landing page.**
+
+Hãy xây dựng một nền tảng có nhiều trang, nhiều phân hệ và có luồng dữ liệu liên kết thực sự.
+
+**2. Không chỉ tập trung vào giao diện.**
+
+Backend, database, API và các chức năng tương tác phải được thiết kế nghiêm túc.
+
+**3. Không sử dụng ảnh AI.**
+
+Toàn bộ hình ảnh tư liệu phải có nguồn gốc thực tế. Không sử dụng ảnh AI trong sản phẩm, kể cả dữ liệu mẫu và demo.
+
+**4. Không sử dụng dữ liệu văn hóa giả.**
+
+Không tự bịa lịch sử, địa điểm, phong tục, nghệ nhân, lễ hội hoặc thông tin tham quan.
+
+**5. Không sử dụng ảnh trái phép.**
+
+Phải kiểm tra quyền sử dụng, nguồn gốc và thông tin tác giả. Việc một ảnh xuất hiện công khai trên Internet không đồng nghĩa với việc được phép sử dụng lại.
+
+**6. Không tạo chức năng giả.**
+
+Mỗi nút và tương tác phải có hành động thực tế hoặc phải được ghi rõ là chưa triển khai.
+
+**7. Không hy sinh hiệu năng để đổi lấy animation.**
+
+Ưu tiên trải nghiệm mượt, đặc biệt trên thiết bị di động.
+
+**8. Không biến văn hóa thành yếu tố trang trí đơn thuần.**
+
+Mỗi họa tiết, hình ảnh, âm thanh và nội dung đều phải có ngữ cảnh văn hóa phù hợp.
+
+**9. Ưu tiên khả năng mở rộng.**
+
+Kiến trúc phải cho phép bổ sung các tỉnh thành, địa điểm, chủ đề văn hóa và cộng đồng mới.
+
+**10. Ưu tiên chất lượng tư liệu và tính chân thực.**
+
+Nếu phải lựa chọn giữa một hình ảnh đẹp nhưng không rõ nguồn gốc và một giao diện chưa có ảnh, hãy chọn giao diện chưa có ảnh.
+
+---
+
+# XXX. TẦM NHÌN CUỐI CÙNG
+
+Hãy xây dựng một nền tảng mà khi người dùng truy cập, họ không chỉ nhìn thấy danh sách các địa điểm du lịch.
+
+Họ có thể:
+
+- Nhìn thấy bản đồ văn hóa Việt Nam.
+- Khám phá lịch sử của một vùng đất.
+- Nghe âm thanh đặc trưng của một không gian văn hóa.
+- Xem ảnh tư liệu thực tế.
+- Đọc những câu chuyện về con người và cộng đồng.
+- Tìm hiểu một làng nghề hoặc lễ hội.
+- Xem trải nghiệm của người khác.
+- Chia sẻ câu chuyện của chính mình.
+- Lưu lại những địa điểm đã ghé thăm.
+- Xây dựng bản đồ ký ức cá nhân.
+
+**Sản phẩm cuối cùng phải mang cảm giác của một bảo tàng số kết hợp với bản đồ khám phá, tạp chí văn hóa và mạng xã hội hiện đại.**
+
+Đó là một nơi để người Việt khám phá, hiểu, trải nghiệm, lưu giữ và lan tỏa giá trị văn hóa Việt Nam.
+
+**Hãy ưu tiên xây dựng một sản phẩm có chiều sâu văn hóa, thiết kế xuất sắc, trải nghiệm sống động, dữ liệu đáng tin cậy và có khả năng phát triển lâu dài.**
