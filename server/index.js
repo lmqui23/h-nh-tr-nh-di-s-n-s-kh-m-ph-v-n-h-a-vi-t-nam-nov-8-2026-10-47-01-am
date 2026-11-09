@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
+import compression from 'compression';
 import helmet from 'helmet';
 import multer from 'multer';
 import { rateLimit } from 'express-rate-limit';
@@ -48,6 +49,10 @@ if (supabaseUrl && supabaseUrl.startsWith('http') && supabaseKey) {
 
 const app = express();
 app.disable('x-powered-by');
+
+// Kích hoạt compression để nén API responses và static assets giúp tải nhanh hơn
+app.use(compression());
+
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(express.json({ limit: '1mb' }));
 
@@ -317,24 +322,46 @@ app.patch('/api/auth/password', requireAuth, authLimiter, async (request, respon
   response.status(204).end();
 });
 
+// TỐI ƯU CÂU QUERY /api/places GOM VỀ 1 QUERY DUY NHẤT TRÁNH N+1 PROBLEM
 app.get('/api/places', async (request, response) => {
   const includeHidden = request.user && ['admin', 'moderator'].includes(request.user.role);
-  const rows = (await pool.query(`SELECT * FROM places WHERE status ${includeHidden ? "!= 'deleted'" : "= 'published'"} ORDER BY name`)).rows;
+  
+  const query = `
+    SELECT 
+      p.*,
+      COALESCE(sp.saved_count, 0) AS saved_count,
+      COALESCE(vp.visited_count, 0) AS visited_count,
+      COALESCE(rev.review_count, 0) AS review_count,
+      COALESCE(rev.avg_rating, 0) AS avg_rating
+    FROM places p
+    LEFT JOIN (
+      SELECT place_id, COUNT(*) AS saved_count FROM saved_places GROUP BY place_id
+    ) sp ON sp.place_id = p.id
+    LEFT JOIN (
+      SELECT place_id, COUNT(*) AS visited_count FROM visited_places GROUP BY place_id
+    ) vp ON vp.place_id = p.id
+    LEFT JOIN (
+      SELECT place_id, COUNT(*) AS review_count, AVG(rating) AS avg_rating 
+      FROM posts 
+      WHERE is_review = 1 AND rating IS NOT NULL AND moderation_status = 'approved' 
+      GROUP BY place_id
+    ) rev ON rev.place_id = p.id
+    WHERE p.status ${includeHidden ? "!= 'deleted'" : "= 'published'"}
+    ORDER BY p.name;
+  `;
 
-  const places = await Promise.all(rows.map(async (row) => {
+  const rows = (await pool.query(query)).rows;
+
+  const places = rows.map((row) => {
     const place = placeFromRow(row);
-    const savedCount = (await pool.query('SELECT COUNT(*) AS count FROM saved_places WHERE place_id = $1', [row.id])).rows[0].count;
-    const visitedCount = (await pool.query('SELECT COUNT(*) AS count FROM visited_places WHERE place_id = $1', [row.id])).rows[0].count;
-    const reviews = (await pool.query(`SELECT COUNT(*) AS count, COALESCE(AVG(rating), 0) AS rating FROM posts WHERE place_id = $1 AND is_review = 1 AND rating IS NOT NULL AND moderation_status = 'approved'`, [row.id])).rows[0];
-
     place.stats = {
-      savedCount: Number(savedCount),
-      visitedCount: Number(visitedCount),
-      reviewCount: Number(reviews.count),
-      rating: Number(reviews.rating),
+      savedCount: Number(row.saved_count),
+      visitedCount: Number(row.visited_count),
+      reviewCount: Number(row.review_count),
+      rating: Number(row.avg_rating),
     };
     return place;
-  }));
+  });
 
   response.json({ places });
 });
@@ -818,19 +845,24 @@ app.patch('/api/admin/comments/:commentId', requireAuth, requireModerator, async
   response.json({ id: request.params.commentId, status });
 });
 
+// TỐI ƯU CÂU QUERY DASHBOARD TRÁNH TẠO 5 QUERY ĐỘC LẬP
 app.get('/api/admin/dashboard', requireAuth, requireAdmin, async (_request, response) => {
-  const users = (await pool.query('SELECT COUNT(*) AS count FROM users')).rows[0].count;
-  const pendingPosts = (await pool.query("SELECT COUNT(*) AS count FROM posts WHERE moderation_status = 'pending'")).rows[0].count;
-  const pendingComments = (await pool.query("SELECT COUNT(*) AS count FROM comments WHERE status = 'pending'")).rows[0].count;
-  const places = (await pool.query("SELECT COUNT(*) AS count FROM places WHERE status = 'published'")).rows[0].count;
-  const media = (await pool.query('SELECT COUNT(*) AS count FROM media')).rows[0].count;
+  const query = `
+    SELECT 
+      (SELECT COUNT(*) FROM users) AS users,
+      (SELECT COUNT(*) FROM posts WHERE moderation_status = 'pending') AS pending_posts,
+      (SELECT COUNT(*) FROM comments WHERE status = 'pending') AS pending_comments,
+      (SELECT COUNT(*) FROM places WHERE status = 'published') AS places,
+      (SELECT COUNT(*) FROM media) AS media;
+  `;
+  const counts = (await pool.query(query)).rows[0];
 
   response.json({
-    users: Number(users),
-    pendingPosts: Number(pendingPosts),
-    pendingComments: Number(pendingComments),
-    places: Number(places),
-    media: Number(media),
+    users: Number(counts.users),
+    pendingPosts: Number(counts.pending_posts),
+    pendingComments: Number(counts.pending_comments),
+    places: Number(counts.places),
+    media: Number(counts.media),
   });
 });
 
@@ -841,7 +873,7 @@ app.use('/api', (_request, response) => response.status(404).json({ error: 'Khô
 // PHỤC VỤ STATIC FILES TỪ THƯ MỤC DIST (REACT APP)
 // =========================================================================
 const distPath = path.join(__dirname, '../dist');
-app.use(express.static(distPath));
+app.use(express.static(distPath, { maxAge: '1d' }));
 
 // Catch-all Route: Trả về index.html cho các route phía Client (React Router)
 app.get('*', (req, res, next) => {
