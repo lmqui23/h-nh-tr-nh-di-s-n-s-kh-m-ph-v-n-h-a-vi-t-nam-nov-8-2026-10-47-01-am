@@ -16,10 +16,11 @@ if (!connectionString) {
 }
 
 const pool = new Pool({
-  connectionString,
-  ssl: process.env.NODE_ENV === 'production' || connectionString.includes('supabase') || connectionString.includes('neon')
-    ? { rejectUnauthorized: false }
-    : false,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Bỏ qua xác thực SSL certificate chain để kết nối Supabase mượt mà
+  },
+  connectionTimeoutMillis: 10000,
 });
 
 // Kết nối Supabase SDK để quản lý Storage Bucket
