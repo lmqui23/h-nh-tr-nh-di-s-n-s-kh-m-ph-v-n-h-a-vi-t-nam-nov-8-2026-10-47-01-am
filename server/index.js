@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import crypto from 'node:crypto';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import helmet from 'helmet';
 import multer from 'multer';
@@ -8,6 +10,10 @@ import pg from 'pg';
 import { createClient } from '@supabase/supabase-js';
 
 const { Pool } = pg;
+
+// Lấy thông tin đường dẫn __dirname trong môi trường ES Module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Kết nối PostgreSQL Supabase
 const connectionString = process.env.DATABASE_URL;
@@ -23,14 +29,22 @@ const pool = new Pool({
   connectionTimeoutMillis: 10000,
 });
 
-// Kết nối Supabase SDK để quản lý Storage Bucket
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Kết nối Supabase SDK để quản lý Storage Bucket (Validate URL an toàn)
+const supabaseUrl = (process.env.SUPABASE_URL || '').trim();
+const supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
 const BUCKET_NAME = process.env.SUPABASE_STORAGE_BUCKET || 'heritage-media';
 
-const supabase = (supabaseUrl && supabaseKey) 
-  ? createClient(supabaseUrl, supabaseKey) 
-  : null;
+let supabase = null;
+if (supabaseUrl && supabaseUrl.startsWith('http') && supabaseKey) {
+  try {
+    supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('✅ Đã khởi tạo Supabase Storage Client thành công!');
+  } catch (err) {
+    console.error('❌ Lỗi khởi tạo Supabase Client:', err.message);
+  }
+} else {
+  console.warn('⚠️ Cảnh báo: Thiếu SUPABASE_URL hợp lệ hoặc SUPABASE_SERVICE_ROLE_KEY.');
+}
 
 const app = express();
 app.disable('x-powered-by');
@@ -820,7 +834,24 @@ app.get('/api/admin/dashboard', requireAuth, requireAdmin, async (_request, resp
   });
 });
 
+// Xử lý 404 cho các route API không tồn tại
 app.use('/api', (_request, response) => response.status(404).json({ error: 'Không tìm thấy API.' }));
+
+// =========================================================================
+// PHỤC VỤ STATIC FILES TỪ THƯ MỤC DIST (REACT APP)
+// =========================================================================
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
+
+// Catch-all Route: Trả về index.html cho các route phía Client (React Router)
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
+// Global Error Handler
 app.use((error, _request, response, _next) => {
   if (error instanceof multer.MulterError) return response.status(400).json({ error: error.code === 'LIMIT_FILE_SIZE' ? 'Ảnh tối đa 8 MB.' : 'Tệp tải lên không hợp lệ.' });
   console.error(error);
