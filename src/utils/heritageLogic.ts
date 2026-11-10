@@ -106,16 +106,12 @@ export function evaluateHeritageBadges(visitedPlaceIds: string[], allPlaces: Pla
   const visitedPlaces = allPlaces.filter((p) => visitedSet.has(p.id));
 
   // Count by categories and regions
-  const waterCount = visitedPlaces.filter(
-    (p) => p.category_id === 'van-hoa-song-nuoc' || p.category_id === 'di-san-phi-vat-the'
-  ).length;
-  const khmerCount = visitedPlaces.filter((p) => p.ethnic_context.toLowerCase().includes('khmer')).length;
   const craftCount = visitedPlaces.filter((p) => p.category_id === 'lang-nghe').length;
-  const ocEoCount = visitedPlaces.filter(
-    (p) => p.category_id === 'khao-co' || p.name.includes('Óc Eo') || p.historical_background.includes('Phù Nam')
+  const historyCount = visitedPlaces.filter((p) => p.category_id === 'di-tich-lich-su').length;
+  const architectureCount = visitedPlaces.filter(
+    (p) => p.category_id === 'di-tich-kien-truc' || p.category_id === 'di-san-tam-linh'
   ).length;
   const dongNamBoCount = visitedPlaces.filter((p) => p.region_id === 'dong-nam-bo').length;
-  const mienTayCount = visitedPlaces.filter((p) => p.region_id === 'dong-bang-song-cuu-long').length;
   const totalVisited = visitedPlaces.length;
 
   return [
@@ -128,20 +124,12 @@ export function evaluateHeritageBadges(visitedPlaceIds: string[], allPlaces: Pla
       unlocked: totalVisited >= 1,
     },
     {
-      id: 'kham-pha-song-nuoc',
-      title: 'Sóng Nước Cửu Long',
-      description: 'Khám phá ít nhất 2 không gian di sản văn hóa sông nước miền Tây',
-      icon: 'Waves',
-      criteria: 'Ghé thăm 2 địa điểm văn hóa sông nước',
-      unlocked: waterCount >= 2,
-    },
-    {
-      id: 'dau-an-chua-thap',
-      title: 'Dấu Ấn Chùa Tháp Khmer',
-      description: 'Trải nghiệm không gian văn hóa & kiến trúc Phật giáo Nam tông Khmer',
-      icon: 'Building2',
-      criteria: 'Ghé thăm 2 di tích văn hóa Khmer',
-      unlocked: khmerCount >= 2,
+      id: 'kham-pha-dong-nam-bo',
+      title: 'Dấu Ấn Đông Nam Bộ',
+      description: 'Khám phá ít nhất 2 địa điểm di sản văn hóa tại vùng đất Đông Nam Bộ',
+      icon: 'Compass',
+      criteria: 'Ghé thăm 2 địa điểm Đông Nam Bộ',
+      unlocked: dongNamBoCount >= 2,
     },
     {
       id: 'hon-lang-nghe',
@@ -152,12 +140,20 @@ export function evaluateHeritageBadges(visitedPlaceIds: string[], allPlaces: Pla
       unlocked: craftCount >= 2,
     },
     {
-      id: 'bi-an-phu-nam',
-      title: 'Huyền Bí Óc Eo - Phù Nam',
-      description: 'Chạm vào dấu tích của nền văn minh cổ xưa rực rỡ vùng châu thổ',
-      icon: 'Compass',
-      criteria: 'Ghé thăm di tích khảo cổ Óc Eo',
-      unlocked: ocEoCount >= 1,
+      id: 'dau-an-kien-truc',
+      title: 'Huyền Bí Kiến Trúc Cổ',
+      description: 'Trải nghiệm không gian công trình kiến trúc nghệ thuật và di sản tâm linh',
+      icon: 'Building2',
+      criteria: 'Ghé thăm 2 di tích kiến trúc/tâm linh',
+      unlocked: architectureCount >= 2,
+    },
+    {
+      id: 'kham-pha-lich-su',
+      title: 'Theo Dấu Lịch Sử',
+      description: 'Tìm hiểu các di tích lịch sử kháng chiến và mở đất xứ Đàng Trong',
+      icon: 'Sparkles',
+      criteria: 'Ghé thăm 2 di tích lịch sử',
+      unlocked: historyCount >= 2,
     },
     {
       id: 'su-gia-di-san',
@@ -166,14 +162,6 @@ export function evaluateHeritageBadges(visitedPlaceIds: string[], allPlaces: Pla
       icon: 'Crown',
       criteria: 'Ghé thăm 5 địa điểm bất kỳ',
       unlocked: totalVisited >= 5,
-    },
-    {
-      id: 'ket-noi-hai-mien',
-      title: 'Giao Thoa Đông - Tây',
-      description: 'Khám phá di sản ở cả 2 vùng Đông Nam Bộ và Đồng bằng sông Cửu Long',
-      icon: 'Sparkles',
-      criteria: 'Ghé thăm di sản ở cả 2 miền Nam Bộ',
-      unlocked: dongNamBoCount >= 1 && mienTayCount >= 1,
     },
   ];
 }

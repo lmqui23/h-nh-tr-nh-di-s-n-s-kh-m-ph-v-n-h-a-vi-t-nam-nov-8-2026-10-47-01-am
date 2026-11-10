@@ -20,12 +20,11 @@ export interface MediaAsset {
 
 export type HeritageCategory = 
   | 'di-tich-lich-su'
+  | 'di-tich-kien-truc'
+  | 'di-san-tam-linh'
   | 'di-san-phi-vat-the'
   | 'lang-nghe'
-  | 'kien-truc-co'
-  | 'chua-dinh-tin-nguong'
   | 'khao-co'
-  | 'van-hoa-song-nuoc'
   | 'am-thuc-dan-gian';
 
 export interface CategoryInfo {
@@ -39,7 +38,7 @@ export interface CategoryInfo {
 export interface Region {
   id: string;
   name: string;
-  code: 'dong-nam-bo' | 'dong-bang-song-cuu-long' | 'khac';
+  code: 'dong-nam-bo' | 'khac';
   description: string;
 }
 
@@ -71,7 +70,7 @@ export interface Place {
   historical_background: string;
   cultural_significance: string;
   architecture_features: string;
-  ethnic_context: string; // "Kinh", "Khmer", "Hoa", "Chăm", "Giao thoa đa tộc người"
+  ethnic_context: string; // "Kinh", "Hoa", "Chăm", "Giao thoa đa tộc người"
   visitor_info: {
     opening_hours?: string;
     fee?: string;

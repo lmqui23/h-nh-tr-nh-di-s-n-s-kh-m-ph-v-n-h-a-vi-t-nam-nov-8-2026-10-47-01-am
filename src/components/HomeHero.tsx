@@ -141,81 +141,58 @@ export const HomeHero: React.FC<HomeHeroProps> = ({
         </div>
       </section>
 
-      {/* 2. REGIONAL HERITAGE SHOWCASE (Đông Nam Bộ & Đồng bằng sông Cửu Long) */}
+     {/* 2. REGIONAL HERITAGE SHOWCASE (Đông Nam Bộ) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-[#D8A84E]/30 pb-3">
           <div>
             <span className="text-xs uppercase tracking-widest text-[#B8322A] font-bold">
               01. KHÔNG GIAN VĂN HÓA
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#28231F] mt-1">
-              Hai Miền Đất Phương Nam
+              Di Sản Đông Nam Bộ
             </h2>
           </div>
           <p className="text-xs text-[#795548] max-w-md">
-            Hệ sinh thái di sản phong phú nơi hội tụ và giao thoa sâu sắc của các cộng đồng Kinh, Khmer, Chăm và Hoa.
+            Hệ sinh thái di sản phong phú, nơi hội tụ hơn 300 năm lịch sử mở đất cùng sự giao thoa sâu sắc của các cộng đồng dân cư.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Card 1: Đồng bằng sông Cửu Long */}
-          <div className="bg-[#FAF6EF] border border-[#D8A84E]/50 rounded-xl p-5 space-y-4 hover:border-[#B8322A] transition-colors">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#397C73] uppercase tracking-wider flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#397C73]" />
-                TÂY NAM BỘ
-              </span>
-              <span className="text-xs text-[#795548]">Châu thổ Cửu Long</span>
-            </div>
-            <h3 className="font-serif text-xl font-bold text-[#28231F]">
-              Đồng Bằng Sông Cửu Long: Sóng Nước & Chùa Tháp
-            </h3>
-            <p className="text-xs text-[#795548] leading-relaxed">
-              Mạng lưới kênh rạch chằng chịt nuôi dưỡng văn hóa chợ nổi đặc trưng, nghệ thuật Đờn ca tài tử Nam Bộ được UNESCO ghi danh, hệ thống hơn 400 ngôi chùa tháp Phật giáo Nam tông Khmer và di chỉ khảo cổ học Óc Eo - Phù Nam cổ đại.
-            </p>
-            <div className="flex flex-wrap gap-1.5 text-[11px] text-[#795548]">
-              <span className="bg-[#EBDDCA]/60 px-2 py-0.5 rounded">Chợ nổi Cái Răng</span>
-              <span className="bg-[#EBDDCA]/60 px-2 py-0.5 rounded">Chùa Chén Kiểu</span>
-              <span className="bg-[#EBDDCA]/60 px-2 py-0.5 rounded">Khảo cổ Óc Eo</span>
-              <span className="bg-[#EBDDCA]/60 px-2 py-0.5 rounded">Làng chiếu Định Yên</span>
-            </div>
-            <button
-              onClick={() => onNavigate('map')}
-              className="text-xs font-semibold text-[#B8322A] hover:underline flex items-center gap-1 pt-2 cursor-pointer"
-            >
-              <span>Xem địa điểm trên bản đồ</span>
-              <ArrowRight size={13} />
-            </button>
-          </div>
-
-          {/* Card 2: Đông Nam Bộ */}
-          <div className="bg-[#FAF6EF] border border-[#D8A84E]/50 rounded-xl p-5 space-y-4 hover:border-[#B8322A] transition-colors">
-            <div className="flex items-center justify-between">
+        {/* Card Showcase - Tối ưu hiển thị Responsive mượt mà trên Mobile & PC */}
+        <div className="w-full">
+          <div className="bg-[#FAF6EF] border border-[#D8A84E]/50 rounded-xl p-5 sm:p-6 space-y-4 hover:border-[#B8322A] transition-all shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-xs font-bold text-[#B8322A] uppercase tracking-wider flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#B8322A]" />
                 ĐÔNG NAM BỘ
               </span>
               <span className="text-xs text-[#795548]">Miền Đất Khai Phá</span>
             </div>
-            <h3 className="font-serif text-xl font-bold text-[#28231F]">
+
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#28231F]">
               Đông Nam Bộ: Làng Nghề Cổ & Đất Thánh Kiên Trung
             </h3>
-            <p className="text-xs text-[#795548] leading-relaxed">
+
+            <p className="text-xs sm:text-sm text-[#795548] leading-relaxed">
               Vùng đất hơn 300 năm khởi nguồn xứ Đàng Trong với đô thành Sài Gòn - Gia Định, làng gốm men xanh Biên Hòa bên dòng sông Đồng Nai, kiến trúc độc bản Tòa Thánh Tây Ninh đạo Cao Đài và di sản Bánh tráng phơi sương Trảng Bàng.
             </p>
-            <div className="flex flex-wrap gap-1.5 text-[11px] text-[#795548]">
-              <span className="bg-[#EBDDCA]/60 px-2 py-0.5 rounded">Gốm Biên Hòa 300 năm</span>
-              <span className="bg-[#EBDDCA]/60 px-2 py-0.5 rounded">Tòa Thánh Tây Ninh</span>
-              <span className="bg-[#EBDDCA]/60 px-2 py-0.5 rounded">Bánh tráng phơi sương</span>
-              <span className="bg-[#EBDDCA]/60 px-2 py-0.5 rounded">Địa đạo Củ Chi</span>
+
+            <div className="flex flex-wrap gap-2 text-[11px] sm:text-xs text-[#795548]">
+              <span className="bg-[#EBDDCA]/60 px-2.5 py-1 rounded-md font-medium">Gốm Biên Hòa 300 năm</span>
+              <span className="bg-[#EBDDCA]/60 px-2.5 py-1 rounded-md font-medium">Tòa Thánh Tây Ninh</span>
+              <span className="bg-[#EBDDCA]/60 px-2.5 py-1 rounded-md font-medium">Bánh tráng phơi sương</span>
+              <span className="bg-[#EBDDCA]/60 px-2.5 py-1 rounded-md font-medium">Địa đạo Củ Chi</span>
             </div>
-            <button
-              onClick={() => onNavigate('map')}
-              className="text-xs font-semibold text-[#B8322A] hover:underline flex items-center gap-1 pt-2 cursor-pointer"
-            >
-              <span>Xem địa điểm trên bản đồ</span>
-              <ArrowRight size={13} />
-            </button>
+
+            <div className="pt-2">
+              <button
+                onClick={() => onNavigate('map')}
+                className="text-xs sm:text-sm font-semibold text-[#B8322A] hover:underline inline-flex items-center gap-1.5 cursor-pointer transition-transform hover:translate-x-1"
+              >
+                <span>Xem địa điểm trên bản đồ</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
           </div>
         </div>
       </section>

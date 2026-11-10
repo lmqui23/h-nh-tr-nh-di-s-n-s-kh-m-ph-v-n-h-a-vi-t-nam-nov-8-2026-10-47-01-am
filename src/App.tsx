@@ -12,7 +12,6 @@ import {
   Journey,
   Post,
   User,
-  UserRole,
   VisitedMemory,
 } from './types';
 import {
@@ -31,7 +30,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { PlaceDetailModal } from './components/PlaceDetailModal';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { AuthDialog } from './components/AuthDialog';
-import { DongSonStar, ChimLacIcon, SongNuocPattern } from './components/VietnamFolkMotifs';
+import { ChimLacIcon } from './components/VietnamFolkMotifs';
 import { evaluateHeritageBadges } from './utils/heritageLogic';
 import { api } from './utils/api';
 
@@ -303,7 +302,7 @@ export default function App() {
             featuredJourneys={journeys}
             featuredArticles={articles}
             onSelectPlace={(place) => setSelectedPlaceForModal(place)}
-            onSelectJourney={(journey) => {
+            onSelectJourney={() => {
               setActiveTab('journeys');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
@@ -451,11 +450,11 @@ export default function App() {
             ? posts.filter((p) => p.place_id === selectedPlaceForModal.id)
             : []
         }
-        onCreateReview={(place) => {
+        onCreateReview={() => {
           setSelectedPlaceForModal(null);
           setActiveTab('community');
         }}
-        onAddToJourney={(place) => {
+        onAddToJourney={() => {
           setSelectedPlaceForModal(null);
           setActiveTab('journeys');
         }}

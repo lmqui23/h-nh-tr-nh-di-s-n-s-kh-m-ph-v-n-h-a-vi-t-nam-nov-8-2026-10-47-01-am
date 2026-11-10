@@ -60,6 +60,13 @@ const cookieName = 'heritage_session';
 const sessionLifetime = 1000 * 60 * 60 * 24 * 14;
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Danh sách các tỉnh thành thuộc ĐBSCL cần lọc bỏ
+const MEKONG_DELTA_PROVINCES = [
+  'Cần Thơ', 'An Giang', 'Đồng Tháp', 'Long An', 'Tiền Giang', 
+  'Bến Tre', 'Vĩnh Long', 'Trà Vinh', 'Hậu Giang', 'Sóc Trăng', 
+  'Bạc Liêu', 'Cà Mau', 'Kiên Giang'
+];
+
 function sendSessionCookie(response, token) {
   const secure = isProduction ? '; Secure' : '';
   response.setHeader('Set-Cookie', `${cookieName}=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${sessionLifetime / 1000}${secure}`);
@@ -322,7 +329,7 @@ app.patch('/api/auth/password', requireAuth, authLimiter, async (request, respon
   response.status(204).end();
 });
 
-// TỐI ƯU CÂU QUERY /api/places GOM VỀ 1 QUERY DUY NHẤT TRÁNH N+1 PROBLEM
+// TỐI ƯU CÂU QUERY /api/places VÀ LỌC SẠCH DỮ LIỆU ĐỒNG BẰNG SÔNG CỬU LONG
 app.get('/api/places', async (request, response) => {
   const includeHidden = request.user && ['admin', 'moderator'].includes(request.user.role);
   
@@ -352,16 +359,23 @@ app.get('/api/places', async (request, response) => {
 
   const rows = (await pool.query(query)).rows;
 
-  const places = rows.map((row) => {
-    const place = placeFromRow(row);
-    place.stats = {
-      savedCount: Number(row.saved_count),
-      visitedCount: Number(row.visited_count),
-      reviewCount: Number(row.review_count),
-      rating: Number(row.avg_rating),
-    };
-    return place;
-  });
+  const places = rows
+    .map((row) => {
+      const place = placeFromRow(row);
+      place.stats = {
+        savedCount: Number(row.saved_count),
+        visitedCount: Number(row.visited_count),
+        reviewCount: Number(row.review_count),
+        rating: Number(row.avg_rating),
+      };
+      return place;
+    })
+    // Filter loại bỏ tất cả các địa điểm thuộc Đồng bằng sông Cửu Long / Tây Nam Bộ
+    .filter((place) => {
+      const isMekongProvince = MEKONG_DELTA_PROVINCES.includes(place.province_name);
+      const isMekongRegion = ['Đồng bằng sông Cửu Long', 'Tây Nam Bộ', 'Miền Tây'].includes(place.region || '');
+      return !isMekongProvince && !isMekongRegion;
+    });
 
   response.json({ places });
 });
@@ -371,7 +385,13 @@ app.get('/api/editorial', async (request, response) => {
   if (!['article', 'journey'].includes(kind)) return response.status(400).json({ error: 'Loại nội dung không hợp lệ.' });
   const canModerate = request.user && ['admin', 'moderator'].includes(request.user.role);
   const rows = (await pool.query(`SELECT * FROM editorial_content WHERE kind = $1 AND status ${canModerate ? "!= 'deleted'" : "= 'published'"} ORDER BY title`, [kind])).rows;
-  response.json({ items: rows.map(editorialFromRow) });
+  
+  // Loại bỏ bài viết liên quan ĐBSCL nếu có
+  const items = rows
+    .map(editorialFromRow)
+    .filter(item => !item.slug.includes('dong-bang-song-cuu-long') && !item.slug.includes('mien-tay'));
+
+  response.json({ items });
 });
 
 app.get('/api/admin/editorial', requireAuth, requireModerator, async (request, response) => {

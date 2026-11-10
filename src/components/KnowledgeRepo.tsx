@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { BookOpen, Search, ShieldCheck, Tag, ExternalLink, Calendar, Clock, ArrowLeft, Quote } from 'lucide-react';
+import { Search, ShieldCheck, Tag, Calendar, ArrowLeft, Quote } from 'lucide-react';
 import { CulturalArticle } from '../types';
-import { DongSonStar, HoaSenMotif } from './VietnamFolkMotifs';
+import { HoaSenMotif } from './VietnamFolkMotifs';
 import { HeritageImage } from './HeritageImage';
 
 interface KnowledgeRepoProps {
@@ -84,7 +84,7 @@ export const KnowledgeRepo: React.FC<KnowledgeRepoProps> = ({
           </div>
         </header>
 
-        {/* Featured Cover Image with verified attribution */}
+        {/* Featured Cover Image */}
         {selectedArticle.cover_image && (
           <div className="rounded-xl overflow-hidden border border-[#D8A84E]/40 bg-[#EBDDCA]">
             <HeritageImage
@@ -133,7 +133,7 @@ export const KnowledgeRepo: React.FC<KnowledgeRepoProps> = ({
           ))}
         </div>
 
-        {/* Source Citations & References Block (Obligatory §9.3) */}
+        {/* Source Citations */}
         <footer className="p-4 sm:p-5 bg-[#FAF6EF] border border-[#D8A84E]/50 rounded-xl space-y-3 text-xs">
           <div className="flex items-center gap-2 text-[#28231F] font-bold">
             <ShieldCheck size={16} className="text-[#397C73]" />
@@ -165,10 +165,10 @@ export const KnowledgeRepo: React.FC<KnowledgeRepoProps> = ({
           <span>KHO TRI THỨC VĂN HÓA & KHẢO CỨU BẢN ĐỊA</span>
         </div>
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#28231F]">
-          Tư Liệu & Bản Sắc Di Sản
+          Tư Liệu & Bản Sắc Di Sản Đông Nam Bộ
         </h1>
         <p className="text-xs sm:text-sm text-[#795548] max-w-2xl">
-          Nơi lưu trữ các nghiên cứu chuyên sâu về lịch sử, nghệ thuật dân gian, tôn giáo, tín ngưỡng và văn hóa các tộc người tại Nam Bộ với nguồn trích dẫn kiểm chứng.
+          Nơi lưu trữ các nghiên cứu chuyên sâu về lịch sử, nghệ thuật dân gian, tôn giáo, tín ngưỡng và văn hóa các tộc người với nguồn trích dẫn kiểm chứng.
         </p>
       </div>
 

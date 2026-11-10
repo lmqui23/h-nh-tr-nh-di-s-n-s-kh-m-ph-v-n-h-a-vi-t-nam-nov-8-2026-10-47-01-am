@@ -3,23 +3,17 @@ import {
   ShieldCheck,
   CheckCircle,
   XCircle,
-  AlertTriangle,
   Plus,
-  Compass,
   FileCheck,
   Eye,
-  ExternalLink,
-  Users,
   Building,
   Pencil,
   Trash2,
   EyeOff,
-  MessageSquare,
   Image as ImageIcon,
 } from 'lucide-react';
 import { CulturalArticle, Journey, Place, Post, UserRole, HeritageCategory } from '../types';
 import { CATEGORIES } from '../data/heritageData';
-import { DongSonStar, HoaSenMotif } from './VietnamFolkMotifs';
 import { HeritageImage } from './HeritageImage';
 import { api } from '../utils/api';
 
@@ -55,7 +49,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editorialItems, setEditorialItems] = useState<Array<CulturalArticle | Journey>>([]);
   const [selectedEditorial, setSelectedEditorial] = useState<CulturalArticle | Journey | null>(null);
 
-  // Form State cho Bài viết / Hành trình (thay thế cho JSON)
+  // Form State cho Bài viết / Hành trình
   const [edTitle, setEdTitle] = useState('');
   const [edSlug, setEdSlug] = useState('');
   const [edSummary, setEdSummary] = useState('');
@@ -73,18 +67,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [dashboardStats, setDashboardStats] = useState<{ users: number; pendingPosts: number; pendingComments: number; places: number; media: number } | null>(null);
   const [postDraft, setPostDraft] = useState<{ id: string; title: string; content: string; topic: string } | null>(null);
 
-  // Place form state
+  // Place form state (Đặt mặc định cho Đông Nam Bộ)
   const [name, setName] = useState('');
   const [altNames, setAltNames] = useState('');
-  const [provinceName, setProvinceName] = useState('Cần Thơ');
-  const [regionId, setRegionId] = useState('dong-bang-song-cuu-long');
+  const [provinceName, setProvinceName] = useState('Bình Dương');
+  const [regionId, setRegionId] = useState('dong-nam-bo');
   const [categoryId, setCategoryId] = useState<HeritageCategory>('di-tich-lich-su');
   const [address, setAddress] = useState('');
-  const [lat, setLat] = useState('10.0');
-  const [lng, setLng] = useState('105.7');
+  const [lat, setLat] = useState('10.98');
+  const [lng, setLng] = useState('106.65');
   const [shortDesc, setShortDesc] = useState('');
   const [history, setHistory] = useState('');
-  const [ethnicContext, setEthnicContext] = useState('Kinh, Khmer');
+  const [ethnicContext, setEthnicContext] = useState('Kinh, Hoa');
   const [verifiedSource, setVerifiedSource] = useState('');
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState('');
@@ -93,15 +87,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const resetPlaceForm = () => {
     setName('');
     setAltNames('');
-    setProvinceName('Cần Thơ');
-    setRegionId('dong-bang-song-cuu-long');
+    setProvinceName('Bình Dương');
+    setRegionId('dong-nam-bo');
     setCategoryId('di-tich-lich-su');
     setAddress('');
-    setLat('10.0');
-    setLng('105.7');
+    setLat('10.98');
+    setLng('106.65');
     setShortDesc('');
     setHistory('');
-    setEthnicContext('Kinh, Khmer');
+    setEthnicContext('Kinh, Hoa');
     setVerifiedSource('');
 
     setMediaFile(null);
@@ -250,12 +244,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setName(place.name || '');
     setAltNames((place.alternative_names || []).join(', '));
     setProvinceName(place.province_name || '');
-    setRegionId(place.region_id || '');
+    setRegionId(place.region_id || 'dong-nam-bo');
     setCategoryId(place.category_id);
     setAddress(place.address || '');
 
-    setLat(String(place.coordinates?.lat ?? 10));
-    setLng(String(place.coordinates?.lng ?? 105.7));
+    setLat(String(place.coordinates?.lat ?? 10.98));
+    setLng(String(place.coordinates?.lng ?? 106.65));
 
     setShortDesc(place.short_description || '');
     setHistory(place.historical_background || '');
@@ -394,8 +388,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       region_id: regionId,
       category_id: categoryId,
       coordinates: {
-        lat: parseFloat(lat) || 10.0,
-        lng: parseFloat(lng) || 105.7,
+        lat: parseFloat(lat) || 10.98,
+        lng: parseFloat(lng) || 106.65,
       },
       address: address.trim(),
       short_description: shortDesc.trim(),
@@ -1129,7 +1123,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="text"
                   value={regionId}
                   onChange={(e) => setRegionId(e.target.value)}
-                  placeholder="dong-bang-song-cuu-long"
+                  placeholder="dong-nam-bo"
                   className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
                 />
               </div>
@@ -1204,7 +1198,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="text"
                   value={ethnicContext}
                   onChange={(e) => setEthnicContext(e.target.value)}
-                  placeholder="Kinh, Khmer, Hoa..."
+                  placeholder="Kinh, Hoa..."
                   className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
                 />
               </div>
@@ -1308,5 +1302,4 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       )}
     </div>
   );
-
 };

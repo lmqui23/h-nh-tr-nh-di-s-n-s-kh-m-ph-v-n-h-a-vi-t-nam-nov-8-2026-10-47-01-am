@@ -7,15 +7,10 @@ import {
   CheckCircle,
   Eye,
   Compass,
-  MapPin,
-  ChevronRight,
   List,
   Map as MapIcon,
-  ChevronUp,
-  ChevronDown,
-  X,
 } from 'lucide-react';
-import { Place, HeritageCategory, Region, Province } from '../types';
+import { Place, HeritageCategory, Province } from '../types';
 import { CATEGORIES } from '../data/heritageData';
 import { filterPlaces } from '../utils/heritageLogic';
 import { DongSonStar, SongNuocPattern } from './VietnamFolkMotifs';
@@ -23,7 +18,6 @@ import { HeritageImage } from './HeritageImage';
 
 interface InteractiveMapProps {
   places: Place[];
-  regions: Region[];
   provinces: Province[];
   onSelectPlace: (place: Place) => void;
   savedPlaceIds: string[];
@@ -33,43 +27,50 @@ interface InteractiveMapProps {
 }
 
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({
-  places,
-  regions,
-  provinces,
+  places = [],
+  provinces = [],
   onSelectPlace,
-  savedPlaceIds,
-  visitedPlaceIds,
+  savedPlaceIds = [],
+  visitedPlaceIds = [],
   onToggleSave,
   onToggleVisited,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [selectedProvince, setSelectedProvince] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<HeritageCategory | 'all'>('all');
-  const [onlyVerified, setOnlyVerified] = useState(false);
+  const [onlyVerified] = useState(false);
   const [activePlace, setActivePlace] = useState<Place | null>(places[0] || null);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   const [showCommunityLayer, setShowCommunityLayer] = useState(true);
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [mapEngine, setMapEngine] = useState<'vector' | 'leaflet'>('vector');
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const leafletContainerRef = useRef<HTMLDivElement | null>(null);
   const leafletMapInstance = useRef<unknown>(null);
 
-  // Filtered places
+  // Lọc danh sách địa điểm di sản (Đã bỏ lọc theo khu vực)
   const filteredPlaces = useMemo(() => {
     return filterPlaces(places, {
       searchQuery,
-      regionId: selectedRegion,
       provinceId: selectedProvince,
       category: selectedCategory,
       onlyVerified,
     });
-  }, [places, searchQuery, selectedRegion, selectedProvince, selectedCategory, onlyVerified]);
+  }, [places, searchQuery, selectedProvince, selectedCategory, onlyVerified]);
 
-  // Leaflet map setup when switched to leaflet engine
+  // Cập nhật địa điểm active nếu địa điểm hiện tại bị lọc mất khỏi danh sách
+  useEffect(() => {
+    if (filteredPlaces.length > 0) {
+      if (!activePlace || !filteredPlaces.some((p) => p.id === activePlace.id)) {
+        setActivePlace(filteredPlaces[0]);
+      }
+    } else {
+      setActivePlace(null);
+    }
+  }, [filteredPlaces, activePlace]);
+
+  // Leaflet map setup
   useEffect(() => {
     let isCancelled = false;
     if (mapEngine === 'leaflet' && leafletContainerRef.current) {
@@ -79,7 +80,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           (leafletMapInstance.current as { remove: () => void }).remove();
         }
 
-        const map = L.map(leafletContainerRef.current).setView([10.2, 106.0], 8);
+        const map = L.map(leafletContainerRef.current).setView([10.85, 106.8], 9);
         leafletMapInstance.current = map;
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -123,12 +124,12 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     };
   }, [mapEngine, filteredPlaces, onSelectPlace]);
 
-  // Coordinate projection math for Vector Vietnamese Cartography
+  // Tọa độ Vector chiếu
   const projectCoords = (lat: number, lng: number) => {
-    const minLat = 8.5;
-    const maxLat = 12.0;
-    const minLng = 104.2;
-    const maxLng = 107.8;
+    const minLat = 10.2;
+    const maxLat = 11.8;
+    const minLng = 106.0;
+    const maxLng = 107.6;
 
     const x = ((lng - minLng) / (maxLng - minLng)) * 800;
     const y = ((maxLat - lat) / (maxLat - minLat)) * 600;
@@ -145,7 +146,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
             <Search className="absolute left-3 top-2.5 text-[#795548]" size={15} />
             <input
               type="text"
-              placeholder="Tìm địa điểm, tên cổ, dân tộc (Khmer, Chăm)..."
+              placeholder="Tìm địa điểm, tên cổ, dân tộc (Kinh, Hoa, Chăm)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-3 py-2 text-xs bg-[#F4EBDD] border border-[#D8A84E]/50 rounded-lg text-[#28231F] placeholder:text-[#795548]/70 focus:outline-none focus:ring-1 focus:ring-[#B8322A]"
@@ -154,39 +155,19 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
           {/* Filter Dropdowns & Toggles */}
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs">
-            {/* Region selector */}
-            <select
-              value={selectedRegion}
-              onChange={(e) => {
-                setSelectedRegion(e.target.value);
-                setSelectedProvince('all');
-              }}
-              className="bg-[#F4EBDD] border border-[#D8A84E]/50 rounded-md px-2 py-1.5 text-xs text-[#28231F] font-medium min-h-[36px]"
-              aria-label="Lọc theo vùng miền"
-            >
-              <option value="all">Toàn Khu Vực</option>
-              {regions.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.name}
-                </option>
-              ))}
-            </select>
-
-            {/* Province selector */}
+            {/* Province selector - Lọc trực tiếp theo danh sách tỉnh thành */}
             <select
               value={selectedProvince}
               onChange={(e) => setSelectedProvince(e.target.value)}
               className="bg-[#F4EBDD] border border-[#D8A84E]/50 rounded-md px-2 py-1.5 text-xs text-[#28231F] min-h-[36px]"
               aria-label="Lọc theo tỉnh thành"
             >
-              <option value="all">Tỉnh Thành</option>
-              {provinces
-                .filter((p) => selectedRegion === 'all' || p.region_id === selectedRegion)
-                .map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
+              <option value="all">Tất Cả Tỉnh Thành</option>
+              {provinces.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
             </select>
 
             {/* Category filter */}
@@ -196,7 +177,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
               className="bg-[#F4EBDD] border border-[#D8A84E]/50 rounded-md px-2 py-1.5 text-xs text-[#28231F] min-h-[36px]"
               aria-label="Lọc theo loại hình di sản"
             >
-              <option value="all">Loại Hình</option>
+              <option value="all">Tất Cả Loại Hình</option>
               {CATEGORIES.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -243,7 +224,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
       {/* Main Map & Sidebar Layout */}
       <div className="flex-1 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 min-h-[560px] p-2 sm:p-4 gap-4">
-        {/* Map Viewport Area (8 of 12 columns on desktop) */}
+        {/* Map Viewport Area */}
         <div
           className={`${
             viewMode === 'list' ? 'hidden lg:block' : 'block'
@@ -327,17 +308,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
                 <rect width="100%" height="100%" fill="url(#grid)" />
 
-                {/* Ocean areas */}
-                <path d="M 0,380 Q 180,420 320,490 L 380,600 L 0,600 Z" fill="#354C68" fillOpacity="0.08" />
-                <path d="M 680,180 Q 560,350 520,600 L 800,600 L 800,180 Z" fill="#354C68" fillOpacity="0.08" />
-
-                {/* River Network */}
-                <g stroke="#397C73" strokeWidth="3" fill="none" opacity="0.6">
-                  <path d="M 320,120 Q 380,240 460,320 T 560,430" />
-                  <path d="M 280,160 Q 360,300 420,410 T 490,520" />
-                  <path d="M 520,80 Q 540,160 500,210 T 520,290" />
-                  <path d="M 210,180 L 150,230" strokeDasharray="3,3" strokeWidth="1.5" />
-                </g>
+                {/* Ocean / River background styling */}
+                <path d="M 600,0 Q 650,200 800,400 L 800,0 Z" fill="#354C68" fillOpacity="0.08" />
 
                 {/* Compass */}
                 <g transform="translate(710, 80) scale(0.65)" opacity="0.6">
@@ -347,7 +319,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                   </text>
                 </g>
 
-                {/* Provinces */}
+                {/* Tên các Tỉnh */}
                 {provinces.map((prov) => {
                   const coords = projectCoords(prov.center_coords[0], prov.center_coords[1]);
                   return (
@@ -365,19 +337,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                       >
                         {prov.name.toUpperCase()}
                       </text>
-                      {prov.historical_names.length > 0 && (
-                        <text
-                          x={coords.x}
-                          y={coords.y + 22}
-                          fill="#795548"
-                          fontSize="8.5"
-                          fontStyle="italic"
-                          textAnchor="middle"
-                          opacity="0.55"
-                        >
-                          ({prov.historical_names[0]})
-                        </text>
-                      )}
                     </g>
                   );
                 })}
@@ -392,8 +351,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                     place.category_id === 'khao-co'
                       ? '#354C68'
                       : place.category_id === 'lang-nghe'
-                      ? '#397C73'
-                      : place.category_id === 'van-hoa-song-nuoc'
                       ? '#397C73'
                       : '#B8322A';
 
@@ -430,10 +387,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
                       <circle r="3.5" fill={isSelected ? markerColor : '#FAF6EF'} />
 
-                      {showCommunityLayer && place.stats.reviewCount > 0 && (
-                        <circle cx="6" cy="-6" r="3" fill="#D8A84E" stroke="#FAF6EF" strokeWidth="1" />
-                      )}
-
                       <text
                         x="0"
                         y="18"
@@ -456,7 +409,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
             </div>
           )}
 
-          {/* Active Place Popup Card overlay on map (Responsive) */}
+          {/* Active Place Popup Card overlay on map */}
           {activePlace && (
             <div className="p-3 bg-[#FAF6EF]/98 border-t border-[#D8A84E]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 z-20 w-full overflow-hidden">
               <div className="flex items-start gap-2.5 sm:gap-3 min-w-0 w-full overflow-hidden">
@@ -494,7 +447,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                 </div>
               </div>
 
-              {/* Action buttons (Touch friendly) */}
+              {/* Action buttons */}
               <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end pt-1 sm:pt-0">
                 <button
                   onClick={() => onToggleSave(activePlace.id)}
@@ -537,7 +490,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           )}
         </div>
 
-        {/* Places List Sidebar (Desktop & Mobile Drawer) */}
+        {/* Places List Sidebar */}
         <div className="lg:col-span-4 flex flex-col gap-3">
           <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#795548] px-1">
             <span>Danh Sách Di Sản ({filteredPlaces.length})</span>
@@ -556,8 +509,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
             ) : (
               filteredPlaces.map((place) => {
                 const isSelected = activePlace?.id === place.id;
-                const isVisited = visitedPlaceIds.includes(place.id);
-                const isSaved = savedPlaceIds.includes(place.id);
 
                 return (
                   <div
@@ -601,22 +552,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                         <p className="text-[11px] text-[#28231F]/70 line-clamp-1 mt-1">
                           {place.short_description}
                         </p>
-
-                        <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-[#D8A84E]/20 text-[10px]">
-                          <span className="text-[#397C73] font-medium">
-                            {place.stats.reviewCount} bài viết
-                          </span>
-
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onSelectPlace(place);
-                            }}
-                            className="text-[#B8322A] hover:underline flex items-center font-semibold cursor-pointer"
-                          >
-                            Hồ sơ <ChevronRight size={11} />
-                          </button>
-                        </div>
                       </div>
                     </div>
                   </div>

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Filter, Star, MapPin, Bookmark, CheckCircle, Eye, Compass, ShieldCheck } from 'lucide-react';
+import { Search, Star, Bookmark, CheckCircle, Eye, ShieldCheck } from 'lucide-react';
 import { Place, HeritageCategory, Region, Province } from '../types';
 import { CATEGORIES } from '../data/heritageData';
 import { filterPlaces } from '../utils/heritageLogic';
-import { DongSonStar, HoaSenMotif } from './VietnamFolkMotifs';
+import { HoaSenMotif } from './VietnamFolkMotifs';
 import { HeritageImage } from './HeritageImage';
 
 interface PlacesExplorerProps {
@@ -31,7 +31,7 @@ export const PlacesExplorer: React.FC<PlacesExplorerProps> = ({
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [selectedProvince, setSelectedProvince] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState<HeritageCategory | 'all'>('all');
-  const [onlyVerified, setOnlyVerified] = useState(false);
+  const [onlyVerified] = useState(false);
 
   const filteredPlaces = filterPlaces(places, {
     searchQuery,
@@ -53,7 +53,7 @@ export const PlacesExplorer: React.FC<PlacesExplorerProps> = ({
           Khám Phá Các Địa Điểm Di Sản
         </h1>
         <p className="text-xs sm:text-sm text-[#795548] max-w-2xl">
-          Hồ sơ chi tiết về các di tích quốc gia, di sản phi vật thể, chùa tháp và làng nghề truyền thống phương Nam với tư liệu đã qua kiểm định.
+          Hồ sơ chi tiết về các di tích quốc gia, di sản phi vật thể, chùa tháp và làng nghề truyền thống Nam Bộ với tư liệu đã qua kiểm định.
         </p>
       </div>
 
@@ -71,24 +71,6 @@ export const PlacesExplorer: React.FC<PlacesExplorerProps> = ({
               className="w-full pl-9 pr-3 py-1.5 bg-[#F4EBDD] border border-[#D8A84E]/50 rounded-lg text-[#28231F] focus:outline-none focus:ring-1 focus:ring-[#B8322A]"
             />
           </div>
-
-          {/* Region selector */}
-          <select
-            value={selectedRegion}
-            onChange={(e) => {
-              setSelectedRegion(e.target.value);
-              setSelectedProvince('all');
-            }}
-            className="p-1.5 bg-[#F4EBDD] border border-[#D8A84E]/50 rounded-lg text-[#28231F]"
-            aria-label="Chọn khu vực"
-          >
-            <option value="all">Toàn bộ khu vực</option>
-            {regions.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.name}
-              </option>
-            ))}
-          </select>
 
           {/* Province selector */}
           <select
