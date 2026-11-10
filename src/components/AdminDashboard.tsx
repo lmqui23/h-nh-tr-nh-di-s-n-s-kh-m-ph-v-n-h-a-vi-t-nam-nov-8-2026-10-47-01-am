@@ -11,6 +11,8 @@ import {
   Trash2,
   EyeOff,
   Image as ImageIcon,
+  BookOpen,
+  Compass,
 } from 'lucide-react';
 import { CulturalArticle, Journey, Place, Post, UserRole, HeritageCategory } from '../types';
 import { CATEGORIES } from '../data/heritageData';
@@ -38,27 +40,43 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   currentUserId,
   onRefresh,
 }) => {
-  const [adminTab, setAdminTab] = useState<'moderation' | 'places' | 'media-audit' | 'users' | 'comments' | 'editorial' | 'uploads'>('moderation');
+  const [adminTab, setAdminTab] = useState<'moderation' | 'places' | 'users' | 'comments' | 'articles' | 'journeys' | 'uploads'>('moderation');
   const [showAddPlaceModal, setShowAddPlaceModal] = useState(false);
   const [adminUsers, setAdminUsers] = useState<Array<{ id: string; email: string; username: string; display_name: string; role: UserRole; status: 'active' | 'locked' }>>([]);
   const [adminComments, setAdminComments] = useState<Array<{ id: string; content: string; status: string; display_name: string; username: string; created_at: string }>>([]);
   const [adminMedia, setAdminMedia] = useState<Array<{ id: string; post_id: string | null; place_id: string | null; image_url: string; original_name: string; mime_type: string; size_bytes: number; username: string; display_name: string; moderation_status: string | null; place_name: string | null }>>([]);
   
-  // State quản lý bài viết & hành trình (Editorial)
-  const [editorialKind, setEditorialKind] = useState<'article' | 'journey'>('article');
-  const [editorialItems, setEditorialItems] = useState<Array<CulturalArticle | Journey>>([]);
-  const [selectedEditorial, setSelectedEditorial] = useState<CulturalArticle | Journey | null>(null);
+  // State quản lý bài viết & hành trình độc lập
+  const [articleItems, setArticleItems] = useState<CulturalArticle[]>([]);
+  const [journeyItems, setJourneyItems] = useState<Journey[]>([]);
+  
+  const [selectedArticle, setSelectedArticle] = useState<CulturalArticle | null>(null);
+  const [selectedJourney, setSelectedJourney] = useState<Journey | null>(null);
 
-  // Form State cho Bài viết / Hành trình
-  const [edTitle, setEdTitle] = useState('');
-  const [edSlug, setEdSlug] = useState('');
-  const [edSummary, setEdSummary] = useState('');
-  const [edContent, setEdContent] = useState('');
-  const [edCoverImage, setEdCoverImage] = useState('');
-  const [edCategory, setEdCategory] = useState('');
-  const [edAuthor, setEdAuthor] = useState('');
-  const [edDuration, setEdDuration] = useState('');
-  const [edStatus, setEdStatus] = useState<'published' | 'hidden'>('published');
+  // Form State cho Bài Viết
+  const [artTitle, setArtTitle] = useState('');
+  const [artSlug, setArtSlug] = useState('');
+  const [artSummary, setArtSummary] = useState('');
+  const [artContent, setArtContent] = useState('');
+  const [artCoverImage, setArtCoverImage] = useState('');
+  const [artCategory, setArtCategory] = useState(CATEGORIES[0]?.name || 'Di Tích Lịch Sử');
+  const [artCustomCategory, setArtCustomCategory] = useState('');
+  const [artAuthor, setArtAuthor] = useState('');
+  const [artReadTime, setArtReadTime] = useState('');
+  const [artStatus, setArtStatus] = useState<'published' | 'hidden'>('published');
+
+  // Form State cho Hành Trình
+  const [jrnTitle, setJrnTitle] = useState('');
+  const [jrnSlug, setJrnSlug] = useState('');
+  const [jrnSubtitle, setJrnSubtitle] = useState('');
+  const [jrnDescription, setJrnDescription] = useState('');
+  const [jrnCoverImage, setJrnCoverImage] = useState('');
+  const [jrnCulturalTheme, setJrnCulturalTheme] = useState('Lịch sử & Kiến trúc');
+  const [jrnCustomTheme, setJrnCustomTheme] = useState('');
+  const [jrnCurator, setJrnCurator] = useState('');
+  const [jrnDuration, setJrnDuration] = useState('');
+  const [jrnSelectedPlaces, setJrnSelectedPlaces] = useState<string[]>([]);
+  const [jrnStatus, setJrnStatus] = useState<'published' | 'hidden'>('published');
 
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
   const [editImageFile, setEditImageFile] = useState<File | null>(null);
@@ -67,7 +85,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [dashboardStats, setDashboardStats] = useState<{ users: number; pendingPosts: number; pendingComments: number; places: number; media: number } | null>(null);
   const [postDraft, setPostDraft] = useState<{ id: string; title: string; content: string; topic: string } | null>(null);
 
-  // Place form state (Đặt mặc định cho Đông Nam Bộ)
+  // Place form state (Đầy đủ tất cả các trường hiển thị)
   const [name, setName] = useState('');
   const [altNames, setAltNames] = useState('');
   const [provinceName, setProvinceName] = useState('Bình Dương');
@@ -78,12 +96,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [lng, setLng] = useState('106.65');
   const [shortDesc, setShortDesc] = useState('');
   const [history, setHistory] = useState('');
+  const [culturalSignificance, setCulturalSignificance] = useState('');
+  const [architectureFeatures, setArchitectureFeatures] = useState('');
   const [ethnicContext, setEthnicContext] = useState('Kinh, Hoa');
   const [verifiedSource, setVerifiedSource] = useState('');
+  const [openingHours, setOpeningHours] = useState('07:30 - 17:00');
+  const [ticketPrice, setTicketPrice] = useState('Miễn phí');
+
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState('');
 
-  // Hàm reset form địa điểm
+  // Hàm sinh slug từ tiêu đề
+  const slugify = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[đĐ]/g, 'd')
+      .replace(/([^0-9a-z-\s])/g, '')
+      .replace(/(\s+)/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
+  // Reset form địa điểm
   const resetPlaceForm = () => {
     setName('');
     setAltNames('');
@@ -95,8 +131,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setLng('106.65');
     setShortDesc('');
     setHistory('');
+    setCulturalSignificance('');
+    setArchitectureFeatures('');
     setEthnicContext('Kinh, Hoa');
     setVerifiedSource('');
+    setOpeningHours('07:30 - 17:00');
+    setTicketPrice('Miễn phí');
 
     setMediaFile(null);
     setMediaPreview('');
@@ -108,40 +148,94 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setAdminError('');
   };
 
-  // Hàm reset form Bài viết / Hành trình
-  const resetEditorialForm = () => {
-    setSelectedEditorial(null);
-    setEdTitle('');
-    setEdSlug('');
-    setEdSummary('');
-    setEdContent('');
-    setEdCoverImage('');
-    setEdCategory('');
-    setEdAuthor('');
-    setEdDuration('');
-    setEdStatus('published');
+  // Reset form Bài viết
+  const resetArticleForm = () => {
+    setSelectedArticle(null);
+    setArtTitle('');
+    setArtSlug('');
+    setArtSummary('');
+    setArtContent('');
+    setArtCoverImage('');
+    setArtCategory(CATEGORIES[0]?.name || 'Di Tích Lịch Sử');
+    setArtCustomCategory('');
+    setArtAuthor('');
+    setArtReadTime('');
+    setArtStatus('published');
     setAdminError('');
   };
 
-  // Nạp dữ liệu khi chọn một item Bài viết/Hành trình để sửa
-  const handleSelectEditorial = (item: CulturalArticle | Journey) => {
-    setSelectedEditorial(item);
-    setEdTitle(item.title || '');
-    setEdSlug(item.slug || '');
-    setEdSummary('summary' in item ? item.summary || '' : 'description' in item ? (item as any).description || '' : '');
-    const rawContent = 'content' in item ? item.content : '';
-    setEdContent(
+  // Reset form Hành trình
+  const resetJourneyForm = () => {
+    setSelectedJourney(null);
+    setJrnTitle('');
+    setJrnSlug('');
+    setJrnSubtitle('');
+    setJrnDescription('');
+    setJrnCoverImage('');
+    setJrnCulturalTheme('Lịch sử & Kiến trúc');
+    setJrnCustomTheme('');
+    setJrnCurator('');
+    setJrnDuration('');
+    setJrnSelectedPlaces([]);
+    setJrnStatus('published');
+    setAdminError('');
+  };
+
+  // Chọn Bài viết để sửa
+  const handleSelectArticle = (art: CulturalArticle) => {
+    setSelectedArticle(art);
+    setArtTitle(art.title || '');
+    setArtSlug(art.slug || slugify(art.title || ''));
+    setArtSummary((art as any).summary || art.excerpt || '');
+    const rawContent = (art as any).content || '';
+    setArtContent(
       typeof rawContent === 'string'
         ? rawContent
         : rawContent
         ? JSON.stringify(rawContent, null, 2)
         : ''
     );
-    setEdCoverImage('cover_image' in item ? (item as any).cover_image || '' : 'image_url' in item ? (item as any).image_url || '' : '');
-    setEdCategory('category' in item ? (item as any).category || '' : '');
-    setEdAuthor('author' in item ? (item as any).author || '' : '');
-    setEdDuration('read_time' in item ? (item as any).read_time || '' : 'duration' in item ? (item as any).duration || '' : '');
-    setEdStatus((item as any).status === 'hidden' ? 'hidden' : 'published');
+    const imgUrl = typeof art.cover_image === 'string' ? art.cover_image : art.cover_image?.image_url || '';
+    setArtCoverImage(imgUrl);
+
+    const existingCat = (art as any).category || art.topic || '';
+    if (CATEGORIES.some(c => c.name === existingCat)) {
+      setArtCategory(existingCat);
+      setArtCustomCategory('');
+    } else {
+      setArtCategory('NEW_CUSTOM');
+      setArtCustomCategory(existingCat);
+    }
+
+    setArtAuthor((art as any).author || '');
+    setArtReadTime(art.read_time || '');
+    setArtStatus((art as any).status === 'hidden' ? 'hidden' : 'published');
+    setAdminError('');
+  };
+
+  // Chọn Hành trình để sửa
+  const handleSelectJourney = (jrn: Journey) => {
+    setSelectedJourney(jrn);
+    setJrnTitle(jrn.title || '');
+    setJrnSlug(jrn.slug || slugify(jrn.title || ''));
+    setJrnSubtitle(jrn.subtitle || '');
+    setJrnDescription(jrn.description || '');
+    setJrnCoverImage(jrn.cover_image || '');
+
+    const existingTheme = jrn.cultural_theme || '';
+    const defaultThemes = ['Lịch sử & Kiến trúc', 'Thủ công truyền thống', 'Khảo cổ học & Tín ngưỡng', 'Tập quán sông nước'];
+    if (defaultThemes.includes(existingTheme)) {
+      setJrnCulturalTheme(existingTheme);
+      setJrnCustomTheme('');
+    } else {
+      setJrnCulturalTheme('NEW_CUSTOM');
+      setJrnCustomTheme(existingTheme);
+    }
+
+    setJrnCurator(jrn.curator || '');
+    setJrnDuration(jrn.estimated_duration || '');
+    setJrnSelectedPlaces(jrn.places || []);
+    setJrnStatus((jrn as any).status === 'hidden' ? 'hidden' : 'published');
     setAdminError('');
   };
 
@@ -158,9 +252,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         } else if (adminTab === 'uploads') {
           const result = await api.adminMedia();
           if (active) setAdminMedia(result.items);
-        } else if (adminTab === 'editorial') {
-          const result = await api.adminEditorial(editorialKind);
-          if (active) setEditorialItems(result.items);
+        } else if (adminTab === 'articles') {
+          const result = await api.adminEditorial('article');
+          if (active) setArticleItems(result.items as CulturalArticle[]);
+        } else if (adminTab === 'journeys') {
+          const result = await api.adminEditorial('journey');
+          if (active) setJourneyItems(result.items as Journey[]);
         }
         if (currentUserRole === 'admin') {
           const result = await api.dashboard();
@@ -172,7 +269,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     };
     void loadTabData();
     return () => { active = false; };
-  }, [adminTab, currentUserRole, editorialKind]);
+  }, [adminTab, currentUserRole]);
 
   const handleUserUpdate = async (userId: string, changes: { role?: UserRole; status?: 'active' | 'locked' }) => {
     try {
@@ -184,55 +281,124 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  // Lưu Bài viết / Hành trình thông qua giao diện Form
-  const handleEditorialSave = async (e: React.FormEvent) => {
+  // Lưu BÀI VIẾT
+  const handleArticleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!edTitle.trim()) {
-      setAdminError('Tiêu đề không được để trống.');
+    if (!artTitle.trim()) {
+      setAdminError('Tiêu đề bài viết không được để trống.');
+      return;
+    }
+
+    const finalCategory = artCategory === 'NEW_CUSTOM' ? artCustomCategory.trim() : artCategory;
+    if (!finalCategory) {
+      setAdminError('Vui lòng chọn hoặc nhập danh mục cho bài viết.');
       return;
     }
 
     try {
       const payload: Record<string, any> = {
-        kind: editorialKind,
-        title: edTitle.trim(),
-        slug: edSlug.trim() || edTitle.toLowerCase().replace(/\s+/g, '-'),
-        status: edStatus,
+        kind: 'article',
+        title: artTitle.trim(),
+        slug: artSlug.trim() || slugify(artTitle.trim()),
+        subtitle: artSummary.trim(),
+        excerpt: artSummary.trim(),
+        summary: artSummary.trim(),
+        topic: finalCategory,
+        category: finalCategory,
+        author: artAuthor.trim() || 'Ban Quản Trị Di Sản',
+        author_title: 'Tác giả di sản',
+        read_time: artReadTime.trim() || '5 phút',
+        published_date: new Date().toLocaleDateString('vi-VN'),
+        region_name: 'Đông Nam Bộ',
+        status: artStatus,
+        cover_image: artCoverImage ? {
+          image_url: artCoverImage,
+          caption: artTitle.trim(),
+          source_name: 'Tư liệu tự tải lên',
+          license_type: 'Bản quyền hệ thống'
+        } : null,
+        sections: [
+          {
+            heading: 'Nội dung chính',
+            body: artContent.trim()
+          }
+        ],
+        tags: [finalCategory],
+        source_citations: [
+          {
+            source_name: 'Tư liệu tổng hợp',
+            type: 'Kiểm chứng nội bộ'
+          }
+        ]
       };
 
-      if (editorialKind === 'article') {
-        payload.summary = edSummary.trim();
-        payload.content = edContent.trim();
-        payload.cover_image = edCoverImage.trim();
-        payload.category = edCategory.trim();
-        payload.author = edAuthor.trim();
-        payload.read_time = edDuration.trim();
-      } else {
-        payload.description = edSummary.trim();
-        payload.image_url = edCoverImage.trim();
-        payload.duration = edDuration.trim();
-      }
-
       const result = await api.saveEditorial(
-        payload as Partial<CulturalArticle | Journey> & { kind: 'article' | 'journey' },
-        selectedEditorial?.id
+        payload as Partial<CulturalArticle> & { kind: 'article' },
+        selectedArticle?.id
       );
 
-      handleSelectEditorial(result.item);
-      const refreshed = await api.adminEditorial(editorialKind);
-      setEditorialItems(refreshed.items);
+      handleSelectArticle(result.item as CulturalArticle);
+      const refreshed = await api.adminEditorial('article');
+      setArticleItems(refreshed.items as CulturalArticle[]);
+      await onRefresh(); // Tự động làm mới dữ liệu toàn hệ thống
       setAdminError('');
     } catch (error) {
-      setAdminError(error instanceof Error ? error.message : 'Không thể lưu nội dung.');
+      setAdminError(error instanceof Error ? error.message : 'Không thể lưu bài viết.');
     }
   };
 
-  const handleEditorialDelete = async (itemId: string) => {
+  // Lưu HÀNH TRÌNH
+  const handleJourneySave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!jrnTitle.trim()) {
+      setAdminError('Tiêu đề hành trình không được để trống.');
+      return;
+    }
+
+    const finalTheme = jrnCulturalTheme === 'NEW_CUSTOM' ? jrnCustomTheme.trim() : jrnCulturalTheme;
+
+    try {
+      const payload: Record<string, any> = {
+        kind: 'journey',
+        title: jrnTitle.trim(),
+        slug: jrnSlug.trim() || slugify(jrnTitle.trim()),
+        subtitle: jrnSubtitle.trim(),
+        description: jrnDescription.trim(),
+        image_url: jrnCoverImage,
+        estimated_duration: jrnDuration.trim(),
+        cultural_theme: finalTheme,
+        curator: jrnCurator.trim(),
+        places: jrnSelectedPlaces,
+        status: jrnStatus,
+      };
+
+      const result = await api.saveEditorial(
+        payload as Partial<Journey> & { kind: 'journey' },
+        selectedJourney?.id
+      );
+
+      handleSelectJourney(result.item as Journey);
+      const refreshed = await api.adminEditorial('journey');
+      setJourneyItems(refreshed.items as Journey[]);
+      await onRefresh(); // Tự động làm mới dữ liệu toàn hệ thống
+      setAdminError('');
+    } catch (error) {
+      setAdminError(error instanceof Error ? error.message : 'Không thể lưu hành trình.');
+    }
+  };
+
+  const handleEditorialDelete = async (itemId: string, kind: 'article' | 'journey') => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa nội dung này?')) return;
     try {
       await api.deleteEditorial(itemId);
-      resetEditorialForm();
-      setEditorialItems((items) => items.filter((item) => item.id !== itemId));
+      if (kind === 'article') {
+        resetArticleForm();
+        setArticleItems((items) => items.filter((item) => item.id !== itemId));
+      } else {
+        resetJourneyForm();
+        setJourneyItems((items) => items.filter((item) => item.id !== itemId));
+      }
+      await onRefresh(); // Tự động làm mới sau khi xóa
     } catch (error) {
       setAdminError(error instanceof Error ? error.message : 'Không thể xóa nội dung.');
     }
@@ -253,8 +419,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
     setShortDesc(place.short_description || '');
     setHistory(place.historical_background || '');
+    setCulturalSignificance(place.cultural_significance || '');
+    setArchitectureFeatures(place.architecture_features || '');
     setEthnicContext(place.ethnic_context || '');
     setVerifiedSource(place.visitor_info?.verified_source || '');
+    setOpeningHours(place.visitor_info?.opening_hours || '07:30 - 17:00');
+    setTicketPrice(place.visitor_info?.fee || 'Miễn phí');
 
     setEditImageFile(null);
     setEditImagePreview('');
@@ -287,10 +457,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         address: address.trim(),
         short_description: shortDesc.trim(),
         historical_background: history.trim(),
+        cultural_significance: culturalSignificance.trim(),
+        architecture_features: architectureFeatures.trim(),
         ethnic_context: ethnicContext.trim(),
         visitor_info: {
           ...selectedPlace.visitor_info,
           verified_source: verifiedSource.trim(),
+          opening_hours: openingHours.trim(),
+          fee: ticketPrice.trim(),
         },
       };
 
@@ -380,10 +554,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
     const newPlace: Place = {
       id: `place-${Date.now()}`,
-      slug: name.toLowerCase().replace(/\s+/g, '-'),
+      slug: slugify(name.trim()),
       name: name.trim(),
       alternative_names: altNames ? altNames.split(',').map((s) => s.trim()) : [],
-      province_id: provinceName.toLowerCase().replace(/\s+/g, '-'),
+      province_id: slugify(provinceName),
       province_name: provinceName,
       region_id: regionId,
       category_id: categoryId,
@@ -394,13 +568,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       address: address.trim(),
       short_description: shortDesc.trim(),
       historical_background: history.trim(),
-      cultural_significance: 'Giá trị di sản văn hóa đặc sắc của địa phương',
-      architecture_features: 'Kiến trúc truyền thống mang đậm bản sắc Nam Bộ',
+      cultural_significance: culturalSignificance.trim() || 'Giá trị di sản văn hóa đặc sắc của địa phương',
+      architecture_features: architectureFeatures.trim() || 'Kiến trúc truyền thống mang đậm bản sắc Nam Bộ',
       ethnic_context: ethnicContext.trim(),
       visitor_info: {
         verified_source: verifiedSource.trim(),
+        opening_hours: openingHours.trim(),
+        fee: ticketPrice.trim(),
       },
-      verification_status: 'pending',
+      status: 'published',
+      verification_status: 'verified',
       media: [],
       stats: {
         savedCount: 0,
@@ -451,11 +628,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         )}
       </div>
 
-      {/* Admin Tabs */}
+      {/* Admin Tabs Navigation */}
       <div className="flex items-center overflow-x-auto border-b border-[#D8A84E]/30 text-xs gap-1">
         <button
           onClick={() => setAdminTab('moderation')}
-          className={`py-2 px-3.5 font-semibold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+          className={`py-2 px-3.5 font-semibold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
             adminTab === 'moderation'
               ? 'border-[#354C68] text-[#354C68]'
               : 'border-transparent text-[#795548] hover:text-[#28231F]'
@@ -467,7 +644,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <button
           onClick={() => setAdminTab('places')}
-          className={`py-2 px-3.5 font-semibold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
+          className={`py-2 px-3.5 font-semibold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
             adminTab === 'places'
               ? 'border-[#354C68] text-[#354C68]'
               : 'border-transparent text-[#795548] hover:text-[#28231F]'
@@ -478,15 +655,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </button>
 
         <button
-          onClick={() => setAdminTab('media-audit')}
-          className={`py-2 px-3.5 font-semibold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 ${
-            adminTab === 'media-audit'
+          onClick={() => setAdminTab('articles')}
+          className={`py-2 px-3.5 font-semibold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            adminTab === 'articles'
               ? 'border-[#354C68] text-[#354C68]'
               : 'border-transparent text-[#795548] hover:text-[#28231F]'
           }`}
         >
-          <ShieldCheck size={14} />
-          <span>Kiểm Tra Bản Quyền & Nguồn Media</span>
+          <BookOpen size={14} />
+          <span>Quản Lý Bài Viết</span>
+        </button>
+
+        <button
+          onClick={() => setAdminTab('journeys')}
+          className={`py-2 px-3.5 font-semibold border-b-2 transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+            adminTab === 'journeys'
+              ? 'border-[#354C68] text-[#354C68]'
+              : 'border-transparent text-[#795548] hover:text-[#28231F]'
+          }`}
+        >
+          <Compass size={14} />
+          <span>Quản Lý Hành Trình</span>
         </button>
 
         <button onClick={() => setAdminTab('comments')} className={`py-2 px-3.5 font-semibold border-b-2 cursor-pointer whitespace-nowrap ${adminTab === 'comments' ? 'border-[#354C68] text-[#354C68]' : 'border-transparent text-[#795548]'}`}>
@@ -494,9 +683,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </button>
         <button onClick={() => setAdminTab('uploads')} className={`py-2 px-3.5 font-semibold border-b-2 cursor-pointer whitespace-nowrap ${adminTab === 'uploads' ? 'border-[#354C68] text-[#354C68]' : 'border-transparent text-[#795548]'}`}>
           Media
-        </button>
-        <button onClick={() => setAdminTab('editorial')} className={`py-2 px-3.5 font-semibold border-b-2 cursor-pointer whitespace-nowrap ${adminTab === 'editorial' ? 'border-[#354C68] text-[#354C68]' : 'border-transparent text-[#795548]'}`}>
-          Bài viết & hành trình
         </button>
         {currentUserRole === 'admin' && (
           <button onClick={() => setAdminTab('users')} className={`py-2 px-3.5 font-semibold border-b-2 cursor-pointer whitespace-nowrap ${adminTab === 'users' ? 'border-[#354C68] text-[#354C68]' : 'border-transparent text-[#795548]'}`}>
@@ -523,7 +709,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       )}
       {adminError && <p role="alert" className="rounded border border-[#B8322A]/30 bg-[#B8322A]/5 p-3 text-xs text-[#B8322A]">{adminError}</p>}
 
-      {/* TAB 1: MODERATION QUEUE */}
+      {/* TAB MODERATION QUEUE */}
       {adminTab === 'moderation' && (
         <div className="space-y-4 text-xs">
           <div className="flex items-center justify-between text-[#795548]">
@@ -642,7 +828,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* TAB 2: PLACES MANAGEMENT TABLE */}
+      {/* TAB PLACES MANAGEMENT */}
       {adminTab === 'places' && (
         <div className="bg-[#FAF6EF] border border-[#D8A84E]/40 rounded-xl shadow-xs text-xs overflow-hidden">
           <div className="w-full overflow-x-auto">
@@ -701,6 +887,487 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
+      {/* TAB ARTICLES */}
+      {adminTab === 'articles' && (
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.2fr)]">
+          {/* Danh sách Bài Viết */}
+          <section className="space-y-3 rounded-xl border border-[#D8A84E]/40 bg-[#FAF6EF] p-4">
+            <div className="flex items-center justify-between border-b border-[#D8A84E]/30 pb-3">
+              <h2 className="font-serif font-bold text-sm text-[#28231F] uppercase tracking-wider flex items-center gap-1.5">
+                <BookOpen size={16} className="text-[#354C68]" />
+                <span>Danh sách Bài Viết ({articleItems.length})</span>
+              </h2>
+              <button
+                onClick={resetArticleForm}
+                className="rounded-lg bg-[#B8322A] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#9E2A23] cursor-pointer flex items-center gap-1"
+              >
+                <Plus size={14} />
+                Tạo Bài Viết Mới
+              </button>
+            </div>
+
+            <div className="divide-y divide-[#D8A84E]/20 max-h-[600px] overflow-y-auto">
+              {articleItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleSelectArticle(item)}
+                  className={`block w-full py-2.5 px-2 text-left text-xs transition-colors rounded-lg ${
+                    selectedArticle?.id === item.id ? 'bg-[#F4EBDD] font-bold text-[#B8322A]' : 'text-[#28231F] hover:bg-[#F4EBDD]/50'
+                  }`}
+                >
+                  <span className="block text-sm font-semibold truncate">{item.title}</span>
+                  <span className="text-[10px] text-[#795548] font-normal">
+                    {(item as any).category || item.topic || 'Di Sản'} · {(item as any).status === 'hidden' ? 'Đã ẩn' : 'Công khai'}
+                  </span>
+                </button>
+              ))}
+              {articleItems.length === 0 && (
+                <p className="py-8 text-center text-xs text-[#795548]">Chưa có bài viết nào trong hệ thống.</p>
+              )}
+            </div>
+          </section>
+
+          {/* Form Quản lý Bài Viết */}
+          <section className="space-y-4 rounded-xl border border-[#D8A84E]/40 bg-[#FAF6EF] p-5">
+            <div className="flex items-center justify-between border-b border-[#D8A84E]/30 pb-3">
+              <h2 className="font-serif font-bold text-base text-[#28231F]">
+                {selectedArticle ? 'Chỉnh sửa Bài Viết' : 'Tạo Bài Viết Mới'}
+              </h2>
+              {selectedArticle && (
+                <button
+                  onClick={() => handleEditorialDelete(selectedArticle.id, 'article')}
+                  className="rounded-lg p-1.5 text-[#B8322A] hover:bg-[#B8322A]/10 cursor-pointer flex items-center gap-1 text-xs"
+                >
+                  <Trash2 size={15} /> Xóa Bài
+                </button>
+              )}
+            </div>
+
+            <form onSubmit={handleArticleSave} className="space-y-4 text-xs">
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">
+                  Tiêu đề bài viết <span className="text-[#B8322A]">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={artTitle}
+                  onChange={(e) => {
+                    setArtTitle(e.target.value);
+                    if (!selectedArticle) setArtSlug(slugify(e.target.value));
+                  }}
+                  placeholder="Nhập tiêu đề bài viết di sản..."
+                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Slug (Đường dẫn tĩnh tự động)</label>
+                  <input
+                    type="text"
+                    value={artSlug}
+                    onChange={(e) => setArtSlug(e.target.value)}
+                    placeholder="duong-dan-tinh"
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-[#F4EBDD]/40 text-[#28231F]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Trạng thái hiển thị</label>
+                  <select
+                    value={artStatus}
+                    onChange={(e) => setArtStatus(e.target.value as 'published' | 'hidden')}
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  >
+                    <option value="published">Công khai</option>
+                    <option value="hidden">Ẩn</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">Tóm tắt nội dung</label>
+                <textarea
+                  rows={3}
+                  value={artSummary}
+                  onChange={(e) => setArtSummary(e.target.value)}
+                  placeholder="Viết tóm tắt cho bài viết..."
+                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">Nội dung bài viết</label>
+                <textarea
+                  rows={8}
+                  value={artContent}
+                  onChange={(e) => setArtContent(e.target.value)}
+                  placeholder="Nội dung chi tiết của bài viết..."
+                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">Ảnh đại diện bài viết</label>
+                <div className="rounded-lg border border-[#D8A84E]/50 bg-white p-3 space-y-3">
+                  {artCoverImage ? (
+                    <img
+                      src={artCoverImage}
+                      alt="Xem trước ảnh"
+                      className="w-full max-h-48 object-cover rounded-lg border border-[#D8A84E]/30"
+                    />
+                  ) : (
+                    <div className="h-28 w-full border border-dashed border-[#D8A84E]/60 rounded-lg flex flex-col items-center justify-center text-[#795548] bg-[#F4EBDD]/30">
+                      <ImageIcon size={24} className="mb-1 opacity-60" />
+                      <span>Chưa chọn ảnh bài viết</span>
+                    </div>
+                  )}
+
+                  <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#354C68]/30 p-2.5 text-xs text-[#354C68] hover:bg-[#F4EBDD] transition-colors">
+                    <ImageIcon size={15} />
+                    <span>Chọn tệp ảnh từ máy tính</span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setArtCoverImage(URL.createObjectURL(file));
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Chủ đề / Danh mục</label>
+                  <select
+                    value={artCategory}
+                    onChange={(e) => setArtCategory(e.target.value)}
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat.id} value={cat.name}>
+                        {cat.name}
+                      </option>
+                    ))}
+                    <option value="NEW_CUSTOM">＋ Thêm danh mục mới...</option>
+                  </select>
+                  {artCategory === 'NEW_CUSTOM' && (
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nhập tên danh mục mới..."
+                      value={artCustomCategory}
+                      onChange={(e) => setArtCustomCategory(e.target.value)}
+                      className="mt-2 w-full min-w-0 rounded-lg border border-[#B8322A]/60 p-2.5 bg-white text-[#28231F]"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Tác giả (Tự do)</label>
+                  <input
+                    type="text"
+                    value={artAuthor}
+                    onChange={(e) => setArtAuthor(e.target.value)}
+                    placeholder="Ví dụ: TS. Nguyễn Văn A..."
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Thời gian đọc (Tự do)</label>
+                  <input
+                    type="text"
+                    value={artReadTime}
+                    onChange={(e) => setArtReadTime(e.target.value)}
+                    placeholder="Ví dụ: 5 phút, 10 phút..."
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-3 flex justify-end gap-2 border-t border-[#D8A84E]/20">
+                <button
+                  type="button"
+                  onClick={resetArticleForm}
+                  className="px-4 py-2 text-[#795548] hover:bg-[#EBDDCA] rounded-lg cursor-pointer"
+                >
+                  Hủy / Làm mới
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#354C68] text-white font-semibold rounded-lg hover:bg-[#2A3D54] cursor-pointer"
+                >
+                  {selectedArticle ? 'Lưu cập nhật' : 'Tạo mới bài viết'}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+
+      {/* TAB JOURNEYS */}
+      {adminTab === 'journeys' && (
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.2fr)]">
+          {/* Danh sách Hành Trình */}
+          <section className="space-y-3 rounded-xl border border-[#D8A84E]/40 bg-[#FAF6EF] p-4">
+            <div className="flex items-center justify-between border-b border-[#D8A84E]/30 pb-3">
+              <h2 className="font-serif font-bold text-sm text-[#28231F] uppercase tracking-wider flex items-center gap-1.5">
+                <Compass size={16} className="text-[#354C68]" />
+                <span>Danh sách Hành Trình ({journeyItems.length})</span>
+              </h2>
+              <button
+                onClick={resetJourneyForm}
+                className="rounded-lg bg-[#B8322A] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#9E2A23] cursor-pointer flex items-center gap-1"
+              >
+                <Plus size={14} />
+                Tạo Hành Trình Mới
+              </button>
+            </div>
+
+            <div className="divide-y divide-[#D8A84E]/20 max-h-[600px] overflow-y-auto">
+              {journeyItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => handleSelectJourney(item)}
+                  className={`block w-full py-2.5 px-2 text-left text-xs transition-colors rounded-lg ${
+                    selectedJourney?.id === item.id ? 'bg-[#F4EBDD] font-bold text-[#B8322A]' : 'text-[#28231F] hover:bg-[#F4EBDD]/50'
+                  }`}
+                >
+                  <span className="block text-sm font-semibold truncate">{item.title}</span>
+                  <span className="text-[10px] text-[#795548] font-normal">
+                    {item.cultural_theme} · {item.places?.length || 0} điểm dừng
+                  </span>
+                </button>
+              ))}
+              {journeyItems.length === 0 && (
+                <p className="py-8 text-center text-xs text-[#795548]">Chưa có hành trình nào trong hệ thống.</p>
+              )}
+            </div>
+          </section>
+
+          {/* Form Quản lý Hành Trình */}
+          <section className="space-y-4 rounded-xl border border-[#D8A84E]/40 bg-[#FAF6EF] p-5">
+            <div className="flex items-center justify-between border-b border-[#D8A84E]/30 pb-3">
+              <h2 className="font-serif font-bold text-base text-[#28231F]">
+                {selectedJourney ? 'Chỉnh sửa Hành Trình' : 'Tạo Hành Trình Mới'}
+              </h2>
+              {selectedJourney && (
+                <button
+                  onClick={() => handleEditorialDelete(selectedJourney.id, 'journey')}
+                  className="rounded-lg p-1.5 text-[#B8322A] hover:bg-[#B8322A]/10 cursor-pointer flex items-center gap-1 text-xs"
+                >
+                  <Trash2 size={15} /> Xóa Hành Trình
+                </button>
+              )}
+            </div>
+
+            <form onSubmit={handleJourneySave} className="space-y-4 text-xs">
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">
+                  Tiêu đề hành trình <span className="text-[#B8322A]">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={jrnTitle}
+                  onChange={(e) => {
+                    setJrnTitle(e.target.value);
+                    if (!selectedJourney) setJrnSlug(slugify(e.target.value));
+                  }}
+                  placeholder="Nhập tiêu đề chuyến đi khám phá di sản..."
+                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Slug (Đường dẫn tĩnh tự động)</label>
+                  <input
+                    type="text"
+                    value={jrnSlug}
+                    onChange={(e) => setJrnSlug(e.target.value)}
+                    placeholder="duong-dan-hanh-trinh"
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-[#F4EBDD]/40 text-[#28231F]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Trạng thái hiển thị</label>
+                  <select
+                    value={jrnStatus}
+                    onChange={(e) => setJrnStatus(e.target.value as 'published' | 'hidden')}
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  >
+                    <option value="published">Công khai</option>
+                    <option value="hidden">Ẩn</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Tiêu đề phụ / Khẩu hiệu</label>
+                  <input
+                    type="text"
+                    value={jrnSubtitle}
+                    onChange={(e) => setJrnSubtitle(e.target.value)}
+                    placeholder="Ví dụ: Ngược dòng lịch sử mở cõi..."
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Người / Tổ chức gợi ý (Curator)</label>
+                  <input
+                    type="text"
+                    value={jrnCurator}
+                    onChange={(e) => setJrnCurator(e.target.value)}
+                    placeholder="Ví dụ: Ban Di Sản Đông Nam Bộ..."
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">Mô tả tổng quan lộ trình</label>
+                <textarea
+                  rows={3}
+                  value={jrnDescription}
+                  onChange={(e) => setJrnDescription(e.target.value)}
+                  placeholder="Mô tả các điểm nhấn nổi bật trên cung đường..."
+                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">Ảnh đại diện tuyến đi</label>
+                <div className="rounded-lg border border-[#D8A84E]/50 bg-white p-3 space-y-3">
+                  {jrnCoverImage ? (
+                    <img
+                      src={jrnCoverImage}
+                      alt="Xem trước ảnh tuyến đi"
+                      className="w-full max-h-48 object-cover rounded-lg border border-[#D8A84E]/30"
+                    />
+                  ) : (
+                    <div className="h-28 w-full border border-dashed border-[#D8A84E]/60 rounded-lg flex flex-col items-center justify-center text-[#795548] bg-[#F4EBDD]/30">
+                      <ImageIcon size={24} className="mb-1 opacity-60" />
+                      <span>Chưa chọn ảnh hành trình</span>
+                    </div>
+                  )}
+
+                  <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#354C68]/30 p-2.5 text-xs text-[#354C68] hover:bg-[#F4EBDD] transition-colors">
+                    <ImageIcon size={15} />
+                    <span>Chọn tệp ảnh từ máy tính</span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setJrnCoverImage(URL.createObjectURL(file));
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Chủ đề văn hóa</label>
+                  <select
+                    value={jrnCulturalTheme}
+                    onChange={(e) => setJrnCulturalTheme(e.target.value)}
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  >
+                    <option value="Lịch sử & Kiến trúc">Lịch sử & Kiến trúc</option>
+                    <option value="Thủ công truyền thống">Thủ công truyền thống</option>
+                    <option value="Khảo cổ học & Tín ngưỡng">Khảo cổ học & Tín ngưỡng</option>
+                    <option value="Tập quán sông nước">Tập quán sông nước</option>
+                    <option value="NEW_CUSTOM">＋ Thêm chủ đề mới...</option>
+                  </select>
+                  {jrnCulturalTheme === 'NEW_CUSTOM' && (
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nhập tên chủ đề văn hóa mới..."
+                      value={jrnCustomTheme}
+                      onChange={(e) => setJrnCustomTheme(e.target.value)}
+                      className="mt-2 w-full min-w-0 rounded-lg border border-[#B8322A]/60 p-2.5 bg-white text-[#28231F]"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Thời lượng hành trình (Tự do)</label>
+                  <input
+                    type="text"
+                    value={jrnDuration}
+                    onChange={(e) => setJrnDuration(e.target.value)}
+                    placeholder="Ví dụ: 1 ngày, 2 ngày 1 đêm, 3 ngày..."
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">
+                  Chọn các điểm dừng di sản (Đã chọn: {jrnSelectedPlaces.length} điểm)
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-44 overflow-y-auto p-2 bg-white border border-[#D8A84E]/50 rounded-lg">
+                  {places.map((place) => {
+                    const isChecked = jrnSelectedPlaces.includes(place.id);
+                    return (
+                      <label
+                        key={place.id}
+                        className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+                          isChecked ? 'bg-[#354C68]/10 font-semibold text-[#354C68]' : 'hover:bg-[#F4EBDD]'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {
+                            if (isChecked) {
+                              setJrnSelectedPlaces((prev) => prev.filter((id) => id !== place.id));
+                            } else {
+                              setJrnSelectedPlaces((prev) => [...prev, place.id]);
+                            }
+                          }}
+                          className="accent-[#354C68]"
+                        />
+                        <span className="truncate">{place.name} ({place.province_name})</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="pt-3 flex justify-end gap-2 border-t border-[#D8A84E]/20">
+                <button
+                  type="button"
+                  onClick={resetJourneyForm}
+                  className="px-4 py-2 text-[#795548] hover:bg-[#EBDDCA] rounded-lg cursor-pointer"
+                >
+                  Hủy / Làm mới
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-[#354C68] text-white font-semibold rounded-lg hover:bg-[#2A3D54] cursor-pointer"
+                >
+                  {selectedJourney ? 'Lưu cập nhật' : 'Tạo mới hành trình'}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+
+      {/* TAB USERS */}
       {adminTab === 'users' && currentUserRole === 'admin' && (
         <div className="overflow-x-auto rounded-lg border border-[#D8A84E]/40 bg-[#FAF6EF]">
           <table className="w-full text-left text-xs">
@@ -723,6 +1390,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
+      {/* TAB COMMENTS */}
       {adminTab === 'comments' && (
         <div className="space-y-3">
           {adminComments.map((comment) => (
@@ -741,236 +1409,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* TAB EDITORIAL: QUẢN LÝ BÀI VIẾT & HÀNH TRÌNH VỚI FORM TRỰC QUAN */}
-      {adminTab === 'editorial' && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.2fr)]">
-          {/* Danh sách bài viết/hành trình */}
-          <section className="space-y-3 rounded-xl border border-[#D8A84E]/40 bg-[#FAF6EF] p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D8A84E]/30 pb-3">
-              <div className="flex gap-1.5">
-                <button
-                  onClick={() => {
-                    setEditorialKind('article');
-                    resetEditorialForm();
-                  }}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer transition-colors ${
-                    editorialKind === 'article' ? 'bg-[#354C68] text-white' : 'text-[#795548] hover:bg-[#EBDDCA]'
-                  }`}
-                >
-                  Bài viết
-                </button>
-                <button
-                  onClick={() => {
-                    setEditorialKind('journey');
-                    resetEditorialForm();
-                  }}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer transition-colors ${
-                    editorialKind === 'journey' ? 'bg-[#354C68] text-white' : 'text-[#795548] hover:bg-[#EBDDCA]'
-                  }`}
-                >
-                  Hành trình
-                </button>
-              </div>
-
-              <button
-                onClick={resetEditorialForm}
-                className="rounded-lg bg-[#B8322A] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#9E2A23] cursor-pointer flex items-center gap-1"
-              >
-                <Plus size={14} />
-                Tạo mới
-              </button>
-            </div>
-
-            <div className="divide-y divide-[#D8A84E]/20 max-h-[600px] overflow-y-auto">
-              {editorialItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleSelectEditorial(item)}
-                  className={`block w-full py-2.5 px-2 text-left text-xs transition-colors rounded-lg ${
-                    selectedEditorial?.id === item.id ? 'bg-[#F4EBDD] font-bold text-[#B8322A]' : 'text-[#28231F] hover:bg-[#F4EBDD]/50'
-                  }`}
-                >
-                  <span className="block text-sm font-semibold truncate">{item.title}</span>
-                  <span className="text-[10px] text-[#795548] font-normal">
-                    {(item as any).status === 'hidden' ? 'Đã ẩn' : 'Công khai'}
-                  </span>
-                </button>
-              ))}
-              {editorialItems.length === 0 && (
-                <p className="py-8 text-center text-xs text-[#795548]">Chưa có nội dung trong hệ thống.</p>
-              )}
-            </div>
-          </section>
-
-          {/* Form chỉnh sửa / tạo mới bài viết/hành trình */}
-          <section className="space-y-4 rounded-xl border border-[#D8A84E]/40 bg-[#FAF6EF] p-5">
-            <div className="flex items-center justify-between border-b border-[#D8A84E]/30 pb-3">
-              <h2 className="font-serif font-bold text-base text-[#28231F]">
-                {selectedEditorial
-                  ? `Chỉnh sửa ${editorialKind === 'article' ? 'bài viết' : 'hành trình'}`
-                  : `Tạo ${editorialKind === 'article' ? 'bài viết' : 'hành trình'} mới`}
-              </h2>
-              {selectedEditorial && (
-                <button
-                  onClick={() => handleEditorialDelete(selectedEditorial.id)}
-                  aria-label="Xóa nội dung"
-                  className="rounded-lg p-1.5 text-[#B8322A] hover:bg-[#B8322A]/10 cursor-pointer flex items-center gap-1 text-xs"
-                >
-                  <Trash2 size={15} /> Xóa
-                </button>
-              )}
-            </div>
-
-            <form onSubmit={handleEditorialSave} className="space-y-4 text-xs">
-              {/* Tiêu đề */}
-              <div>
-                <label className="block mb-1 font-semibold text-[#795548]">
-                  Tiêu đề <span className="text-[#B8322A]">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={edTitle}
-                  onChange={(e) => setEdTitle(e.target.value)}
-                  placeholder="Tiêu đề nội dung..."
-                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                />
-              </div>
-
-              {/* Slug & Đường dẫn */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block mb-1 font-semibold text-[#795548]">Slug (Đường dẫn tĩnh)</label>
-                  <input
-                    type="text"
-                    value={edSlug}
-                    onChange={(e) => setEdSlug(e.target.value)}
-                    placeholder="tieu-de-duong-dan"
-                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-1 font-semibold text-[#795548]">Trạng thái hiển thị</label>
-                  <select
-                    value={edStatus}
-                    onChange={(e) => setEdStatus(e.target.value as 'published' | 'hidden')}
-                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                  >
-                    <option value="published">Công khai</option>
-                    <option value="hidden">Ẩn</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Tóm tắt */}
-              <div>
-                <label className="block mb-1 font-semibold text-[#795548]">Tóm tắt nội dung</label>
-                <textarea
-                  rows={3}
-                  value={edSummary}
-                  onChange={(e) => setEdSummary(e.target.value)}
-                  placeholder="Tóm tắt ngắn gọn..."
-                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                />
-              </div>
-
-              {/* Nội dung chi tiết (chỉ dùng cho bài viết) */}
-              {editorialKind === 'article' && (
-                <div>
-                  <label className="block mb-1 font-semibold text-[#795548]">Nội dung chi tiết</label>
-                  <textarea
-                    rows={8}
-                    value={edContent}
-                    onChange={(e) => setEdContent(e.target.value)}
-                    placeholder="Viết nội dung bài viết..."
-                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                  />
-                </div>
-              )}
-
-              {/* Ảnh đại diện */}
-              <div>
-                <label className="block mb-1 font-semibold text-[#795548]">URL Ảnh đại diện</label>
-                <input
-                  type="text"
-                  value={edCoverImage}
-                  onChange={(e) => setEdCoverImage(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                />
-                {edCoverImage && (
-                  <img
-                    src={edCoverImage}
-                    alt="Preview"
-                    className="mt-2 max-h-40 w-full object-cover rounded-lg border border-[#D8A84E]/30"
-                  />
-                )}
-              </div>
-
-              {/* Thông tin bổ sung */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {editorialKind === 'article' && (
-                  <div>
-                    <label className="block mb-1 font-semibold text-[#795548]">Chủ đề / Danh mục</label>
-                    <input
-                      type="text"
-                      value={edCategory}
-                      onChange={(e) => setEdCategory(e.target.value)}
-                      placeholder="Di sản, Văn hóa..."
-                      className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                    />
-                  </div>
-                )}
-
-                {editorialKind === 'article' && (
-                  <div>
-                    <label className="block mb-1 font-semibold text-[#795548]">Tác giả</label>
-                    <input
-                      type="text"
-                      value={edAuthor}
-                      onChange={(e) => setEdAuthor(e.target.value)}
-                      placeholder="Tên tác giả"
-                      className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                    />
-                  </div>
-                )}
-
-                <div>
-                  <label className="block mb-1 font-semibold text-[#795548]">
-                    {editorialKind === 'article' ? 'Thời gian đọc' : 'Thời lượng hành trình'}
-                  </label>
-                  <input
-                    type="text"
-                    value={edDuration}
-                    onChange={(e) => setEdDuration(e.target.value)}
-                    placeholder={editorialKind === 'article' ? '5 phút' : '2 ngày 1 đêm'}
-                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
-                  />
-                </div>
-              </div>
-
-              {/* Nút thao tác */}
-              <div className="pt-3 flex justify-end gap-2 border-t border-[#D8A84E]/20">
-                <button
-                  type="button"
-                  onClick={resetEditorialForm}
-                  className="px-4 py-2 text-[#795548] hover:bg-[#EBDDCA] rounded-lg cursor-pointer"
-                >
-                  Hủy / Làm mới
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-[#354C68] text-white font-semibold rounded-lg hover:bg-[#2A3D54] cursor-pointer"
-                >
-                  {selectedEditorial ? 'Lưu cập nhật' : 'Tạo mới nội dung'}
-                </button>
-              </div>
-            </form>
-          </section>
-        </div>
-      )}
-
+      {/* TAB UPLOADS */}
       {adminTab === 'uploads' && (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {adminMedia.map((media) => (
@@ -988,42 +1427,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* TAB 3: MEDIA LICENSE AUDIT TABLE */}
-      {adminTab === 'media-audit' && (
-        <div className="bg-[#FAF6EF] border border-[#D8A84E]/40 rounded-xl p-5 space-y-4 text-xs">
-          <div className="p-3.5 bg-[#397C73]/10 border border-[#397C73]/30 rounded-lg text-xs leading-relaxed text-[#28231F]">
-            <strong>Quy Định Kiểm Soát Bản Quyền (§XV Master Prompt):</strong> Mọi hình ảnh hiển thị trên nền tảng bắt buộc phải có nguồn tư liệu thực tế (Wikimedia Commons, Flickr Commons, Viện khảo cổ, Cục Di sản hoặc ảnh chụp thực địa). Tuyệt đối cấm sử dụng ảnh tạo bởi các mô hình AI generative.
-          </div>
-
-          <div className="space-y-3">
-            {places.map((place) => (
-              <div key={place.id} className="p-3 border border-[#D8A84E]/30 rounded-lg bg-[#F4EBDD]/40 space-y-2">
-                <div className="flex items-center justify-between font-bold text-sm text-[#28231F]">
-                  <span>{place.name} ({place.province_name})</span>
-                  <span className="text-[11px] text-[#397C73] font-normal">{place.media.length} tư liệu hình ảnh</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                  {place.media.map((med, i) => (
-                    <div key={i} className="flex gap-2.5 p-2 bg-[#FAF6EF] rounded border border-[#D8A84E]/30 items-center">
-                      <div className="w-14 h-14 rounded overflow-hidden shrink-0 border border-[#D8A84E]/20">
-                        <HeritageImage src={med.image_url} alt="" className="w-full h-full object-cover" />
-                      </div>
-                      <div className="text-[11px] min-w-0">
-                        <p className="font-semibold text-[#28231F] truncate">{med.caption || place.name}</p>
-                        <p className="text-[#795548]">Tác giả: {med.photographer || 'Cơ quan quản lý'}</p>
-                        <p className="text-[#397C73] font-medium">Giấy phép: {med.license_type}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* POPUP DÙNG CHUNG CHO ĐỊA ĐIỂM */}
+      {/* POPUP MODAL DÙNG CHUNG CHO ĐỊA ĐIỂM */}
       {(showAddPlaceModal || selectedPlace) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#28231F]/70 backdrop-blur-sm p-2 sm:p-4">
           <div className="flex flex-col w-full max-w-3xl max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-hidden rounded-xl border border-[#B8322A] bg-[#FAF6EF] shadow-2xl text-xs">
@@ -1191,6 +1595,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 />
               </div>
 
+              {/* Giá trị văn hóa & Ý nghĩa di sản */}
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">
+                  Giá trị văn hóa & Ý nghĩa di sản
+                </label>
+                <textarea
+                  rows={3}
+                  value={culturalSignificance}
+                  onChange={(e) => setCulturalSignificance(e.target.value)}
+                  placeholder="Ý nghĩa văn hóa, giá trị tâm linh, nghi lễ..."
+                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                />
+              </div>
+
+              {/* Đặc điểm kiến trúc */}
+              <div>
+                <label className="block mb-1 font-semibold text-[#795548]">
+                  Đặc điểm kiến trúc & Nghệ thuật
+                </label>
+                <textarea
+                  rows={3}
+                  value={architectureFeatures}
+                  onChange={(e) => setArchitectureFeatures(e.target.value)}
+                  placeholder="Phong cách kiến trúc, hoa văn trang trí, vật liệu xây dựng..."
+                  className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                />
+              </div>
+
               {/* Bối cảnh dân tộc */}
               <div>
                 <label className="block mb-1 font-semibold text-[#795548]">Bối cảnh dân tộc</label>
@@ -1215,6 +1647,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   onChange={(e) => setVerifiedSource(e.target.value)}
                   className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
                 />
+              </div>
+
+              {/* Thông tin tham quan (Giờ mở cửa & Giá vé) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Giờ mở cửa</label>
+                  <input
+                    type="text"
+                    value={openingHours}
+                    onChange={(e) => setOpeningHours(e.target.value)}
+                    placeholder="Ví dụ: 07:30 - 17:00"
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-1 font-semibold text-[#795548]">Giá vé tham quan</label>
+                  <input
+                    type="text"
+                    value={ticketPrice}
+                    onChange={(e) => setTicketPrice(e.target.value)}
+                    placeholder="Ví dụ: Miễn phí / 30.000 VNĐ"
+                    className="w-full min-w-0 rounded-lg border border-[#D8A84E]/50 p-3 bg-white text-[#28231F]"
+                  />
+                </div>
               </div>
 
               {/* Ảnh địa điểm */}

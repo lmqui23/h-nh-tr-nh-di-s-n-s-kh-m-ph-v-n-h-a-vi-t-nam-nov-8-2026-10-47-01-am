@@ -34,8 +34,40 @@ export const KnowledgeRepo: React.FC<KnowledgeRepoProps> = ({
     return true;
   });
 
+  // Helper chuyển đổi linh hoạt cover_image (chuỗi hoặc object) thành URL hợp lệ
+  const getCoverImageUrl = (coverImage: any): string => {
+    if (!coverImage) return '';
+    if (typeof coverImage === 'string') return coverImage;
+    return coverImage.image_url || '';
+  };
+
+  // Helper lấy thông tin nguồn của ảnh
+  const getCoverImageCaption = (coverImage: any, defaultTitle: string): string => {
+    if (coverImage && typeof coverImage === 'object') {
+      return coverImage.caption || defaultTitle;
+    }
+    return defaultTitle;
+  };
+
+  const getCoverImageSource = (coverImage: any): { source: string; license: string } => {
+    if (coverImage && typeof coverImage === 'object') {
+      return {
+        source: coverImage.source_name || 'Tư liệu tự tải lên',
+        license: coverImage.license_type || 'Bản quyền hệ thống',
+      };
+    }
+    return {
+      source: 'Tư liệu tự tải lên',
+      license: 'Bản quyền hệ thống',
+    };
+  };
+
   // If viewing a specific article
   if (selectedArticle) {
+    const coverUrl = getCoverImageUrl(selectedArticle.cover_image);
+    const coverCaption = getCoverImageCaption(selectedArticle.cover_image, selectedArticle.title);
+    const coverMeta = getCoverImageSource(selectedArticle.cover_image);
+
     return (
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8 animate-[fadeIn_0.2s_ease-out]">
         <button
@@ -85,17 +117,17 @@ export const KnowledgeRepo: React.FC<KnowledgeRepoProps> = ({
         </header>
 
         {/* Featured Cover Image */}
-        {selectedArticle.cover_image && (
+        {coverUrl && (
           <div className="rounded-xl overflow-hidden border border-[#D8A84E]/40 bg-[#EBDDCA]">
             <HeritageImage
-              src={selectedArticle.cover_image.image_url}
+              src={coverUrl}
               alt={selectedArticle.title}
               className="w-full aspect-16/9 object-cover"
             />
             <div className="p-3 text-[11px] text-[#795548] bg-[#FAF6EF] border-t border-[#D8A84E]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-              <span>{selectedArticle.cover_image.caption || selectedArticle.title}</span>
+              <span>{coverCaption}</span>
               <span className="text-[10px] text-[#397C73]">
-                Nguồn: {selectedArticle.cover_image.source_name} ({selectedArticle.cover_image.license_type})
+                Nguồn: {coverMeta.source} ({coverMeta.license})
               </span>
             </div>
           </div>
@@ -214,43 +246,47 @@ export const KnowledgeRepo: React.FC<KnowledgeRepoProps> = ({
 
       {/* Articles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredArticles.map((article) => (
-          <article
-            key={article.id}
-            onClick={() => onSelectArticle(article)}
-            className="group bg-[#FAF6EF] border border-[#D8A84E]/40 rounded-xl overflow-hidden hover:border-[#B8322A] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
-          >
-            <div>
-              <div className="relative aspect-16/10 overflow-hidden bg-[#EBDDCA]">
-                <HeritageImage
-                  src={article.cover_image?.image_url}
-                  alt={article.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <span className="absolute top-2 left-2 text-[10px] font-semibold bg-[#FAF6EF]/90 text-[#B8322A] px-2 py-0.5 rounded backdrop-blur-xs">
-                  {article.topic}
+        {filteredArticles.map((article) => {
+          const coverUrl = getCoverImageUrl(article.cover_image);
+
+          return (
+            <article
+              key={article.id}
+              onClick={() => onSelectArticle(article)}
+              className="group bg-[#FAF6EF] border border-[#D8A84E]/40 rounded-xl overflow-hidden hover:border-[#B8322A] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+            >
+              <div>
+                <div className="relative aspect-16/10 overflow-hidden bg-[#EBDDCA]">
+                  <HeritageImage
+                    src={coverUrl}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span className="absolute top-2 left-2 text-[10px] font-semibold bg-[#FAF6EF]/90 text-[#B8322A] px-2 py-0.5 rounded backdrop-blur-xs">
+                    {article.topic}
+                  </span>
+                </div>
+
+                <div className="p-4 space-y-2">
+                  <span className="text-[10px] text-[#795548]">{article.read_time} đọc · {article.region_name}</span>
+                  <h3 className="font-serif font-bold text-base text-[#28231F] group-hover:text-[#B8322A] transition-colors line-clamp-2">
+                    {article.title}
+                  </h3>
+                  <p className="text-xs text-[#795548] line-clamp-3 leading-relaxed">
+                    {article.excerpt}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 pt-2 border-t border-[#D8A84E]/20 text-[11px] text-[#795548] flex items-center justify-between">
+                <span>{article.author}</span>
+                <span className="text-[#397C73] font-medium flex items-center gap-1">
+                  <ShieldCheck size={12} /> Đã kiểm chứng
                 </span>
               </div>
-
-              <div className="p-4 space-y-2">
-                <span className="text-[10px] text-[#795548]">{article.read_time} đọc · {article.region_name}</span>
-                <h3 className="font-serif font-bold text-base text-[#28231F] group-hover:text-[#B8322A] transition-colors line-clamp-2">
-                  {article.title}
-                </h3>
-                <p className="text-xs text-[#795548] line-clamp-3 leading-relaxed">
-                  {article.excerpt}
-                </p>
-              </div>
-            </div>
-
-            <div className="p-4 pt-2 border-t border-[#D8A84E]/20 text-[11px] text-[#795548] flex items-center justify-between">
-              <span>{article.author}</span>
-              <span className="text-[#397C73] font-medium flex items-center gap-1">
-                <ShieldCheck size={12} /> Đã kiểm chứng
-              </span>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
     </div>
   );

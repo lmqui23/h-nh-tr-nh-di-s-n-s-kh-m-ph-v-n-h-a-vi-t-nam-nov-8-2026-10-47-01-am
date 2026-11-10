@@ -317,7 +317,6 @@ export default function App() {
         {activeTab === 'map' && (
           <InteractiveMap
             places={places}
-            regions={REGIONS}
             provinces={PROVINCES}
             onSelectPlace={(place) => setSelectedPlaceForModal(place)}
             savedPlaceIds={savedPlaceIds}
@@ -357,6 +356,7 @@ export default function App() {
               setUserCustomJourneys((prev) => [newJourney, ...prev]);
             }}
             userCustomJourneys={userCustomJourneys}
+            currentUserRole={currentUser?.role}
           />
         )}
 

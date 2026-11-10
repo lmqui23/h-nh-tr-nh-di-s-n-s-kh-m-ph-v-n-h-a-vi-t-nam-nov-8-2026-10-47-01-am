@@ -7,7 +7,7 @@ import {
   Sparkles,
   Compass,
 } from 'lucide-react';
-import { Journey, Place } from '../types';
+import { Journey, Place, UserRole } from '../types';
 import { calculateRouteSummary } from '../utils/heritageLogic';
 import { HeritageImage } from './HeritageImage';
 
@@ -17,6 +17,7 @@ interface JourneyPlannerProps {
   onSelectPlace: (place: Place) => void;
   onCreateCustomJourney: (newJourney: Journey) => void;
   userCustomJourneys: Journey[];
+  currentUserRole?: UserRole; // Thêm prop kiểm tra vai trò người dùng
 }
 
 export const JourneyPlanner: React.FC<JourneyPlannerProps> = ({
@@ -25,6 +26,7 @@ export const JourneyPlanner: React.FC<JourneyPlannerProps> = ({
   onSelectPlace,
   onCreateCustomJourney,
   userCustomJourneys = [],
+  currentUserRole = 'user',
 }) => {
   const allAvailableJourneys = [...journeys, ...userCustomJourneys];
 
@@ -67,16 +69,16 @@ export const JourneyPlanner: React.FC<JourneyPlannerProps> = ({
       id: `custom-journey-${Date.now()}`,
       slug: `custom-${Date.now()}`,
       title: newTitle.trim(),
-      subtitle: 'Hành trình do người dùng thiết kế riêng',
-      description: newDesc.trim() || 'Hành trình khám phá các di sản văn hóa yêu thích.',
-      curator: 'Hành trình cá nhân của bạn',
+      subtitle: 'Tuyến hành trình do Ban Quản Trị thiết kế',
+      description: newDesc.trim() || 'Hành trình khám phá các di sản văn hóa đặc sắc.',
+      curator: 'Ban Quản Trị Di Sản',
       cover_image:
         allPlaces.find((p) => p.id === selectedPlaceIds[0])?.media[0]?.image_url || '',
       places: selectedPlaceIds,
-      tags: ['Tự thiết kế', 'Hành trình cá nhân'],
+      tags: ['Tuyến di sản', 'Lộ trình khám phá'],
       estimated_duration: `${Math.ceil(selectedPlaceIds.length * 0.75)} ngày`,
-      cultural_theme: 'Khám phá tự chọn',
-      is_official: false,
+      cultural_theme: 'Khám phá di sản',
+      is_official: true,
     };
 
     onCreateCustomJourney(created);
@@ -87,47 +89,52 @@ export const JourneyPlanner: React.FC<JourneyPlannerProps> = ({
     setSelectedPlaceIds([]);
   };
 
+  const isAdmin = currentUserRole === 'admin' || currentUserRole === 'moderator';
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header chính - LUÔN HIỂN THỊ DÙ CÓ DỮ LIỆU HAY KHÔNG */}
+      {/* Header chính */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#D8A84E]/30 pb-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#B8322A] font-bold">
             <Route size={16} />
-            <span>TUYẾN KHÁM PHÁ & THIẾT KẾ LỘ TRÌNH</span>
+            <span>TUYẾN KHÁM PHÁ & LỘ TRÌNH DI SẢN</span>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#28231F]">
             Hành Trình Di Sản Đông Nam Bộ
           </h1>
           <p className="text-xs sm:text-sm text-[#795548] max-w-2xl">
-            Lựa chọn những cung đường di sản được các nhà nghiên cứu gợi ý hoặc tự xây dựng lộ trình khám phá văn hóa của riêng bạn.
+            Lựa chọn những cung đường di sản được các nhà nghiên cứu và chuyên gia văn hóa gợi ý để chuẩn bị cho chuyến trải nghiệm của bạn.
           </p>
         </div>
 
-        <button
-          onClick={() => setIsBuildingNew(!isBuildingNew)}
-          className="px-4 py-2.5 bg-[#B8322A] text-white rounded-lg text-xs font-semibold hover:bg-[#9E2A23] transition-colors flex items-center gap-2 cursor-pointer shrink-0 self-start sm:self-auto"
-        >
-          <Plus size={15} />
-          <span>{isBuildingNew ? 'Hủy Tạo Mới' : 'Tự Thiết Kế Tuyến Đi'}</span>
-        </button>
+        {/* Nút chỉ hiển thị cho Admin / Moderator */}
+        {isAdmin && (
+          <button
+            onClick={() => setIsBuildingNew(!isBuildingNew)}
+            className="px-4 py-2.5 bg-[#B8322A] text-white rounded-lg text-xs font-semibold hover:bg-[#9E2A23] transition-colors flex items-center gap-2 cursor-pointer shrink-0 self-start sm:self-auto"
+          >
+            <Plus size={15} />
+            <span>{isBuildingNew ? 'Hủy Tạo Mới' : 'Tạo Tuyến Hành Trình Mới'}</span>
+          </button>
+        )}
       </div>
 
-      {/* FORM TẠO HÀNH TRÌNH MỚI */}
-      {isBuildingNew && (
+      {/* FORM TẠO HÀNH TRÌNH MỚI (CHỈ DÀNH CHO ADMIN / MODERATOR) */}
+      {isAdmin && isBuildingNew && (
         <form
           onSubmit={handleSaveCustomJourney}
           className="p-5 bg-[#FAF6EF] border border-[#B8322A] rounded-xl space-y-4 shadow-md"
         >
           <div className="flex items-center gap-2 text-sm font-bold text-[#B8322A]">
             <Sparkles size={16} />
-            <span>Thiết Kế Hành Trình Di Sản Cá Nhân</span>
+            <span>Thiết Kế Tuyến Hành Trình Di Sản Mới (Quyền Quản Trị)</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-[#795548] block mb-1">
-                Tên chuyến đi của bạn:
+                Tên tuyến hành trình:
               </label>
               <input
                 type="text"
@@ -141,11 +148,11 @@ export const JourneyPlanner: React.FC<JourneyPlannerProps> = ({
 
             <div>
               <label className="text-xs font-semibold text-[#795548] block mb-1">
-                Ghi chú / Mục tiêu hành trình:
+                Mô tả ngắn / Mục tiêu hành trình:
               </label>
               <input
                 type="text"
-                placeholder="Ví dụ: Chụp ảnh tư liệu và tìm hiểu kỹ thuật làm gốm"
+                placeholder="Ví dụ: Lộ trình tìm hiểu kỹ thuật gốm sứ truyền thống và tín ngưỡng dân gian"
                 value={newDesc}
                 onChange={(e) => setNewDesc(e.target.value)}
                 className="w-full text-xs p-2 rounded bg-[#F4EBDD] border border-[#D8A84E]/60 text-[#28231F]"
@@ -213,7 +220,7 @@ export const JourneyPlanner: React.FC<JourneyPlannerProps> = ({
             Chưa có tuyến hành trình nào
           </h3>
           <p className="text-xs text-[#795548] max-w-md mx-auto">
-            Hệ thống chưa có tuyến khám phá mặc định. Bạn có thể bấm vào nút <strong className="text-[#B8322A]">"Tự Thiết Kế Tuyến Đi"</strong> ở trên để tạo lộ trình khám phá cá nhân đầu tiên.
+            Hệ thống đang cập nhật các tuyến khám phá di sản từ các chuyên gia. Bạn vui lòng quay lại sau.
           </p>
         </div>
       ) : selectedJourney ? (

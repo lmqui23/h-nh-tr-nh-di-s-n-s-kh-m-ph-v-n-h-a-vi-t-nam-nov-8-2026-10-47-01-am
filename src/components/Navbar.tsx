@@ -119,7 +119,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Zone 3: Audio & Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Audio Widget Thu Gọn (Popup hiển thị đè phía trên) */}
-            <AudioPlayerWidget />
+            {/* <AudioPlayerWidget /> */}
 
             {/* Nút Hồ Sơ */}
             <button
